@@ -1,0 +1,27 @@
+# CMake generation dependency list for this directory.
+D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/3.25.2/CMakeCCompiler.cmake
+D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/3.25.2/CMakeCXXCompiler.cmake
+D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/3.25.2/CMakeRCCompiler.cmake
+D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/3.25.2/CMakeSystem.cmake
+D:/Universidade/CG/CG/Checkpoint 1/src/CMakeLists.txt
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeCInformation.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeCXXInformation.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeGenericSystem.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeRCInformation.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Compiler/MSVC-C.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Compiler/MSVC-CXX.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Compiler/MSVC.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/FindOpenGL.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/FindPackageMessage.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Platform/Windows-MSVC-C.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Platform/Windows-MSVC-CXX.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Platform/Windows-MSVC.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Platform/Windows.cmake
+D:/Universidade/CG/cmake/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake

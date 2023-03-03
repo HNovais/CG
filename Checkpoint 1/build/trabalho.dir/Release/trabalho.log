@@ -1,0 +1,4 @@
+﻿  main.cpp
+D:\Universidade\CG\CG\Checkpoint 1\src\main.cpp(65,20): warning C4018: '<': signed/unsigned mismatch
+D:\Universidade\CG\CG\Checkpoint 1\src\main.cpp(71,21): warning C4018: '<': signed/unsigned mismatch
+  trabalho.vcxproj -> D:\Universidade\CG\CG\Checkpoint 1\build\Release\trabalho.exe
