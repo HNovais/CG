@@ -2,6 +2,8 @@
 #include <math.h>
 #include <iostream>
 #include <string>
+#include <io.h>
+#include <direct.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -17,6 +19,12 @@ using namespace rapidxml;
 
 float alpha = 5.0f;
 float beta = 0.0f;
+
+int width = 0;
+int height = 0;
+
+std::vector<float> cameraValues;
+std::vector<std::vector<float>> modelsCoords;
 
 void changeSize(int w, int h) {
 
@@ -44,39 +52,36 @@ void changeSize(int w, int h) {
 }
 
 void drawShape() {
-	// Read the file and store the coordinates in a vector
-	std::ifstream infile("D:/Universidade/CG/CG/Checkpoint 1/src/cone.3d");
-	if (!infile) {
-		std::cerr << "Error opening file" << std::endl;
-		return;
-	}
+	for (int i = 0; i < modelsCoords.size(); i++) {
+		std::vector<float> coords = modelsCoords[i];
 
-	std::vector<float> coords;
-	float x, y, z;
-	while (infile >> x >> y >> z) {
-		coords.push_back(x);
-		coords.push_back(y);
-		coords.push_back(z);
-	}
-
-	std::cout << "Coords size: " << coords.size() << std::endl;
-
-	// Print the coordinates to the console
-	for (int i = 0; i < coords.size(); i += 3) {
-		std::cout << "x = " << coords[i] << ", y = " << coords[i + 1] << ", z = " << coords[i + 2] << std::endl;
-	}
-
-	// Draw the triangle
-	glBegin(GL_TRIANGLES);
-		for (int i = 0; i < coords.size(); i += 9) {
-			glVertex3f(coords[i], coords[i + 1], coords[i + 2]);
-			glVertex3f(coords[i + 3], coords[i + 4], coords[i + 5]);
-			glVertex3f(coords[i + 6], coords[i + 7], coords[i + 8]);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// Draw the model
+		glBegin(GL_TRIANGLES);
+		for (int j = 0; j < coords.size(); j += 9) {
+			glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
+			glVertex3f(coords[j + 3], coords[j + 4], coords[j + 5]);
+			glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
 		}
-	glEnd();
+		glEnd();
+	}
 }
 
-void renderScene(void) {
+
+void renderScene() {
+
+	float x = cameraValues[0];
+	float y = cameraValues[1];
+	float z = cameraValues[2];
+	float lookAtX = cameraValues[3];
+	float lookAtY = cameraValues[4];
+	float lookAtZ = cameraValues[5];
+	float upX = cameraValues[6];
+	float upY = cameraValues[7];
+	float upZ = cameraValues[8];
+	float fov = cameraValues[9];
+	float near = cameraValues[10];
+	float far = cameraValues[11];
 
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -86,9 +91,9 @@ void renderScene(void) {
 
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
-	gluLookAt(camX * 5, sin(beta) * 5, camZ * 5,
-		      0.0,0.0,0.0,
-			  0.0f,1.0f,0.0f);
+	gluLookAt(camX * x, sin(beta) * y, camZ * z,
+		      lookAtX,lookAtY,lookAtZ,
+			  upX,upY,upZ);
 
 	glBegin(GL_LINES);
 		// X axis in red
@@ -144,8 +149,9 @@ void processKeys(unsigned char key, int xx, int yy) {
 }
 
 void loadXML() {
+
 	// Load the XML file
-	file<> xmlFile("configuration.xml");
+	file<> xmlFile("../src/configuration.xml");
 
 	// Parse the XML file
 	xml_document<> doc;
@@ -156,8 +162,8 @@ void loadXML() {
 
 	// Get the window node and its attributes
 	xml_node<>* windowNode = rootNode->first_node("window");
-	std::string width = windowNode->first_attribute("width")->value();
-	std::string height = windowNode->first_attribute("height")->value();
+	width = std::stoi(windowNode->first_attribute("width")->value());
+	height = std::stoi(windowNode->first_attribute("height")->value());
 
 	// Get the camera node and its children
 	xml_node<>* cameraNode = rootNode->first_node("camera");
@@ -165,34 +171,60 @@ void loadXML() {
 	xml_node<>* lookAtNode = cameraNode->first_node("lookAt");
 	xml_node<>* upNode = cameraNode->first_node("up");
 	xml_node<>* projectionNode = cameraNode->first_node("projection");
-	std::string x = positionNode->first_attribute("x")->value();
-	std::string y = positionNode->first_attribute("y")->value();
-	std::string z = positionNode->first_attribute("z")->value();
-	std::string fov = projectionNode->first_attribute("fov")->value();
-	std::string near = projectionNode->first_attribute("near")->value();
-	std::string far = projectionNode->first_attribute("far")->value();
+
+	cameraValues.push_back(std::stof(positionNode->first_attribute("x")->value()));
+	cameraValues.push_back(std::stof(positionNode->first_attribute("y")->value()));
+	cameraValues.push_back(std::stof(positionNode->first_attribute("z")->value()));
+	cameraValues.push_back(std::stof(lookAtNode->first_attribute("x")->value()));
+	cameraValues.push_back(std::stof(lookAtNode->first_attribute("y")->value()));
+	cameraValues.push_back(std::stof(lookAtNode->first_attribute("z")->value()));
+	cameraValues.push_back(std::stof(upNode->first_attribute("x")->value()));
+	cameraValues.push_back(std::stof(upNode->first_attribute("y")->value()));
+	cameraValues.push_back(std::stof(upNode->first_attribute("z")->value()));
+	cameraValues.push_back(std::stof(projectionNode->first_attribute("fov")->value()));
+	cameraValues.push_back(std::stof(projectionNode->first_attribute("near")->value()));
+	cameraValues.push_back(std::stof(projectionNode->first_attribute("far")->value()));
 
 	// Get the group node and its child nodes
 	xml_node<>* groupNode = rootNode->first_node("group");
 	xml_node<>* modelsNode = groupNode->first_node("models");
 	xml_node<>* modelNode = modelsNode->first_node("model");
+
 	while (modelNode != NULL)
 	{
+		char cwd[1024];
+
 		std::string file = modelNode->first_attribute("file")->value();
-		std::cout << "Model file: " << file << std::endl;
+
+		std::vector<float> coords;
+		float x, y, z;
+		std::string file_path = "../src/" + file;
+		std::cout << "Loading model from file: " << file_path << std::endl;
+
+		std::ifstream infile(file_path);
+
+		while (infile >> x >> y >> z) {
+			coords.push_back(x);
+			coords.push_back(y);
+			coords.push_back(z);
+		}
+
+		modelsCoords.push_back(coords);
+
 		modelNode = modelNode->next_sibling("model");
 	}
 }
 
+
 int main(int argc, char **argv) {
 
-	//loadXML();
+	loadXML();
 
 // init GLUT and the window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(100,100);
-	glutInitWindowSize(800,800);
+	glutInitWindowSize(width,height);
 	glutCreateWindow("ez");
 		
 // Required callback registry 

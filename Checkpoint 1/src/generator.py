@@ -1,17 +1,55 @@
 import sys
 import math
 
-def generateSphere(radius, slices, stacks, outputFile):
+def generateSphere(radius, slice, stack, outputFile):
     triangles = []
 
-    for i in range(int(stacks)):
-        stackAngle = math.pi * (i + 0.5) / stacks
-        for j in range(int(slices)):
-            sliceAngle = 2 * math.pi * j / slices
-            x = radius * math.cos(stackAngle) * math.cos(sliceAngle)
-            z = radius * math.cos(stackAngle) * math.sin(sliceAngle)
-            y = radius * math.sin(stackAngle)
-            triangles.append((x, y, z))
+    slices = int(slice)
+    stacks = int(stack)
+    
+    for i in range(slices):
+        alpha = i * (2 * math.pi / slices)
+        alpha1 = (i + 1) * (2 * math.pi / slices)
+
+        for j in range(int(-(stacks / 2)), int(stacks/2)):
+            beta = j * (math.pi / stacks)
+            beta1 = (j + 1) * (math.pi /stacks)
+
+            x = radius * math.sin(alpha) * math.cos(beta) 
+            y = radius * math.sin(beta)
+            z = radius * math.cos(alpha) * math.cos(beta)
+
+            triangles.append((x,y,z))
+
+            x = radius * math.sin(alpha1) * math.cos(beta) 
+            y = radius * math.sin(beta)
+            z = radius * math.cos(alpha1) * math.cos(beta)
+
+            triangles.append((x,y,z))
+
+            x = radius * math.sin(alpha) * math.cos(beta1) 
+            y = radius * math.sin(beta1)
+            z = radius * math.cos(alpha1) * math.cos(beta1)
+
+            triangles.append((x,y,z))
+
+            x = radius * math.sin(alpha1) * math.cos(beta) 
+            y = radius * math.sin(beta)
+            z = radius * math.cos(alpha1) * math.cos(beta)
+
+            triangles.append((x,y,z))
+
+            x = radius * math.sin(alpha1) * math.cos(beta1) 
+            y = radius * math.sin(beta1)
+            z = radius * math.cos(alpha1) * math.cos(beta1)
+
+            triangles.append((x,y,z))
+
+            x = radius * math.sin(alpha) * math.cos(beta1) 
+            y = radius * math.sin(beta1)
+            z = radius * math.cos(alpha) * math.cos(beta1)
+
+            triangles.append((x,y,z))
 
     with open(outputFile, 'w') as f:
         for i, l in enumerate(triangles):
@@ -170,18 +208,43 @@ def generateCone(radius, height, slices, stacks, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
-def generatePlane(xx, zz, outputFile):
-    x = int(xx) / 2
-    z = int(zz) / 2
+def generatePlane(size, divisions, outputFile):
+    step = size / divisions
+    triangles = []
+
+    for i in range(int(divisions)):
+        for j in range(int(divisions)):
+            x1 = -size/2 + i*step
+            z1 = -size/2 + j*step
+            y1 = 0
+
+            x2 = -size/2 + (i+1)*step
+            z2 = -size/2 + j*step
+            y2 = 0
+
+            x3 = -size/2 + i*step
+            z3 = -size/2 + (j+1)*step
+            y3 = 0
+
+            x4 = -size/2 + (i+1)*step
+            z4 = -size/2 + (j+1)*step
+            y4 = 0
+
+            triangles.append([x3, y3, z3])
+            triangles.append([x2, y2, z2])
+            triangles.append([x1, y1, z1])
+                
+            triangles.append([x3, y3, z3])
+            triangles.append([x4, y4, z4])
+            triangles.append([x2, y2, z2])
+
 
     with open(outputFile, 'w') as f:
-        f.write(f"{-x} 0 {z}\n")
-        f.write(f"{x} 0 {z}\n")
-        f.write(f"{x} 0 {-z}\n\n")
+        for i, l in enumerate(triangles):
+            f.write(' '.join(str(x) for x in l) + '\n')
+            if (i+1) % 3 == 0:
+                f.write('\n')
 
-        f.write(f"{-x} 0 {z}\n")
-        f.write(f"{x} 0 {-z}\n")
-        f.write(f"{-x} 0 {-z}\n")
 
 shapes = {
     'sphere': {
