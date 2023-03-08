@@ -29,7 +29,7 @@ def generateSphere(radius, slice, stack, outputFile):
 
             x = radius * math.sin(alpha) * math.cos(beta1) 
             y = radius * math.sin(beta1)
-            z = radius * math.cos(alpha1) * math.cos(beta1)
+            z = radius * math.cos(alpha) * math.cos(beta1)
 
             triangles.append((x,y,z))
 
@@ -236,7 +236,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 
                 a = xx * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
-                c = zz * ((stacks - (j - 1)) / stacks)
+                c = zz * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
 
