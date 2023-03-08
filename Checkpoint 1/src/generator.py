@@ -89,12 +89,13 @@ def generateBox(size, divisions, outputFile):
             triangles.append([x2, y2, z2])
 
             triangles.append([x3, -y3, z3])
-            triangles.append([x2, -y2, z2])
             triangles.append([x1, -y1, z1])
-                
-            triangles.append([x3, -y3, z3])
-            triangles.append([x4, -y4, z4])
             triangles.append([x2, -y2, z2])
+            
+            triangles.append([x3, -y3, z3])
+            triangles.append([x2, -y2, z2])
+            triangles.append([x4, -y4, z4])
+              
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -115,21 +116,22 @@ def generateBox(size, divisions, outputFile):
             y4 = -size/2 + (j+1)*step
             z4 = size/2
 
-            triangles.append([x3, y3, z3])
-            triangles.append([x2, y2, z2])
-            triangles.append([x1, y1, z1])
+            triangles.append([x3, y3, -z3])
+            triangles.append([x2, y2, -z2])
+            triangles.append([x1, y1, -z1])
                 
-            triangles.append([x3, y3, z3])
-            triangles.append([x4, y4, z4])
-            triangles.append([x2, y2, z2])
+            triangles.append([x3, y3, -z3])
+            triangles.append([x4, y4, -z4])
+            triangles.append([x2, y2, -z2])
 
-            triangles.append([x3, -y3, z3])
-            triangles.append([x2, -y2, z2])
-            triangles.append([x1, -y1, z1])
-                
-            triangles.append([x3, -y3, z3])
-            triangles.append([x4, -y4, z4])
-            triangles.append([x2, -y2, z2])        
+            triangles.append([x3, y3, z3])
+            triangles.append([x1, y1, z1])
+            triangles.append([x2, y2, z2])
+            
+            triangles.append([x3, y3, z3])
+            triangles.append([x2, y2, z2])
+            triangles.append([x4, y4, z4]) 
+
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -150,22 +152,22 @@ def generateBox(size, divisions, outputFile):
             y4 = -size/2 + (j+1)*step
             x4 = size/2
 
-            triangles.append([x3, y3, z3])
-            triangles.append([x2, y2, z2])
-            triangles.append([x1, y1, z1])
+            triangles.append([-x3, y3, z3])
+            triangles.append([-x1, y1, z1])
+            triangles.append([-x2, y2, z2])
                 
-            triangles.append([x3, y3, z3])
-            triangles.append([x4, y4, z4])
-            triangles.append([x2, y2, z2])
+            triangles.append([-x3, y3, z3])
+            triangles.append([-x2, y2, z2])
+            triangles.append([-x4, y4, z4])
 
-            triangles.append([x3, -y3, z3])
-            triangles.append([x2, -y2, z2])
-            triangles.append([x1, -y1, z1])
-                
-            triangles.append([x3, -y3, z3])
-            triangles.append([x4, -y4, z4])
-            triangles.append([x2, -y2, z2])       
-
+            triangles.append([x3, y3, -z3])
+            triangles.append([x1, y1, -z1])
+            triangles.append([x2, y2, -z2])
+                           
+            triangles.append([x3, y3, -z3])
+            triangles.append([x2, y2, -z2])
+            triangles.append([x4, y4, -z4])
+    
     with open(outputFile, 'w') as f:
         for i, l in enumerate(triangles):
             f.write(' '.join(str(x) for x in l) + '\n')

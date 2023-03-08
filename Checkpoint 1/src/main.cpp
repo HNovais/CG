@@ -51,6 +51,7 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_MODELVIEW);
 }
 
+
 void drawShape() {
 	for (int i = 0; i < modelsCoords.size(); i++) {
 		std::vector<float> coords = modelsCoords[i];
@@ -147,6 +148,7 @@ void processKeys(unsigned char key, int xx, int yy) {
 	glutPostRedisplay();
 
 }
+
 
 void loadXML() {
 
