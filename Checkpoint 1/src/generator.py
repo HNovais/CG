@@ -174,35 +174,96 @@ def generateBox(size, divisions, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
-def generateCone(radius, height, slices, stacks, outputFile):
-    vertices = []
-
-    angle_increment = 2 * math.pi / slices
-    height_increment = height / stacks
-
-    for i in range(int(stacks) + 1):
-        z = i * height_increment
-        radius_stack = radius * (stacks - i) / stacks
-
-        for j in range(int(slices)):
-            angle = j * angle_increment
-            x = radius_stack * math.cos(angle)
-            y = radius_stack * math.sin(angle)
-            vertices.append([x, y, z])
-
+def generateCone(radius, height, slice, stack, outputFile):
     triangles = []
-    for i in range(int(stacks)):
-        for j in range(int(slices)):
-            current_stack_idx = i * slices + j
-            next_stack_idx = current_stack_idx + slices
 
-            v1_idx = current_stack_idx
-            v2_idx = (j + 1) % slices + current_stack_idx
-            v3_idx = (j + 1) % slices + next_stack_idx
-            v4_idx = current_stack_idx + next_stack_idx
+    slices = int(slice)
+    stacks = int(stack)
 
-            triangles.append([v1_idx, v2_idx, v3_idx])
-            triangles.append([v1_idx, v3_idx, v4_idx])
+    for j in range(stacks):
+        for i in range(slices): 
+            angle = 2 * math.pi / slices
+            z = radius * math.cos(i * angle)
+            x = radius * math.sin(i * angle)
+            zz = radius * math.cos((i + 1) * angle)
+            xx = radius * math.sin((i + 1) * angle)
+
+            if j == 0:
+                a = xx * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = zz * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+
+                a = x * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = z * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+                
+                a = 0
+                b = height * j / stacks
+                c = 0
+
+                triangles.append((a, b, c))
+
+            angle2 = math.pi / slices
+
+            if (j < stacks - 1):
+                a = x * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = z * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+                
+                a = xx * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = zz * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+                
+                a = x * ((stacks - j - 1) / stacks)
+                b = height * (j + 1) / stacks
+                c = z * ((stacks - j - 1) / stacks)
+
+                triangles.append((a, b, c))
+                
+                a = xx * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = zz * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+                
+                a = xx * ((stacks - j - 1) / stacks)
+                b = height * (j + 1) / stacks
+                c = zz * ((stacks - (j - 1)) / stacks)
+
+                triangles.append((a, b, c))
+
+                a = x * ((stacks - j - 1) / stacks)
+                b = height * (j + 1) / stacks
+                c = z * ((stacks - j - 1) / stacks)
+
+                triangles.append((a, b, c))
+
+            else:
+                a = x * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = z * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+
+                a = xx * ((stacks - j) / stacks)
+                b = height * j / stacks
+                c = zz * ((stacks - j) / stacks)
+
+                triangles.append((a, b, c))
+
+                a = 0
+                b = height
+                c = 0
+
+                triangles.append((a, b, c))
 
     with open(outputFile, 'w') as f:
         for i, l in enumerate(triangles):
