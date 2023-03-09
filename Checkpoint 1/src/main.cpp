@@ -17,11 +17,15 @@
 
 using namespace rapidxml;
 
-float alpha = 5.0f;
+float alpha = 0.0f;
 float beta = 0.0f;
 
 int width = 0;
 int height = 0;
+
+float fov = 0.0f;
+float near = 0.0f;
+float far = 0.0f;
 
 std::vector<float> cameraValues;
 std::vector<std::vector<float>> modelsCoords;
@@ -42,10 +46,9 @@ void changeSize(int w, int h) {
 	glLoadIdentity();
 	
 	// Set the viewport to be the entire window
-    glViewport(0, 0, w, h);
+	glViewport(0, 0, width, height);
 
-	// Set perspective
-	gluPerspective(45.0f ,ratio, 1.0f ,1000.0f);
+	gluPerspective(fov, width / height, near, far);
 
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
@@ -80,21 +83,20 @@ void renderScene() {
 	float upX = cameraValues[6];
 	float upY = cameraValues[7];
 	float upZ = cameraValues[8];
-	float fov = cameraValues[9];
-	float near = cameraValues[10];
-	float far = cameraValues[11];
 
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// set the camera
 	glLoadIdentity();
-
+	
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
-	gluLookAt(camX * x, sin(beta) * y, camZ * z,
+	gluLookAt(camX + x, sin(beta) + y, camZ + z,
 		      lookAtX,lookAtY,lookAtZ,
 			  upX,upY,upZ);
+
+	
 
 	glBegin(GL_LINES);
 		// X axis in red
@@ -177,15 +179,17 @@ void loadXML() {
 	cameraValues.push_back(std::stof(positionNode->first_attribute("x")->value()));
 	cameraValues.push_back(std::stof(positionNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(positionNode->first_attribute("z")->value()));
+	std::cout << "Camera Values: " << "X: " << std::stof(positionNode->first_attribute("x")->value()) << " Y: " << std::stof(positionNode->first_attribute("y")->value()) << " Z: " << std::stof(positionNode->first_attribute("z")->value()) << std::endl;
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("x")->value()));
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("z")->value()));
 	cameraValues.push_back(std::stof(upNode->first_attribute("x")->value()));
 	cameraValues.push_back(std::stof(upNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(upNode->first_attribute("z")->value()));
-	cameraValues.push_back(std::stof(projectionNode->first_attribute("fov")->value()));
-	cameraValues.push_back(std::stof(projectionNode->first_attribute("near")->value()));
-	cameraValues.push_back(std::stof(projectionNode->first_attribute("far")->value()));
+	fov = std::stof(projectionNode->first_attribute("fov")->value());
+	near = std::stof(projectionNode->first_attribute("near")->value());
+	far = std::stof(projectionNode->first_attribute("far")->value());
+	std::cout << "Camera Projection: " << "FOV: " << fov << " Near: " << near << " Far: " << far << std::endl;
 
 	// Get the group node and its child nodes
 	xml_node<>* groupNode = rootNode->first_node("group");
