@@ -274,7 +274,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 def generatePlane(size, divisions, outputFile):
     step = size / divisions
     triangles = []
-
+    
     for i in range(int(divisions)):
         for j in range(int(divisions)):
             x1 = -size/2 + i*step
@@ -301,6 +301,33 @@ def generatePlane(size, divisions, outputFile):
             triangles.append([x4, y4, z4])
             triangles.append([x2, y2, z2])
 
+    for i in range(int(divisions)):
+        for j in range(int(divisions)):
+            x1 = -size/2 + i*step
+            z1 = -size/2 + j*step
+            y1 = 0
+
+            x2 = -size/2 + (i+1)*step
+            z2 = -size/2 + j*step
+            y2 = 0
+
+            x3 = -size/2 + i*step
+            z3 = -size/2 + (j+1)*step
+            y3 = 0
+
+            x4 = -size/2 + (i+1)*step
+            z4 = -size/2 + (j+1)*step
+            y4 = 0
+
+            triangles.append([x3, y3, z3])
+            triangles.append([x1, y1, z1])
+            triangles.append([x2, y2, z2])
+            
+                
+            triangles.append([x3, y3, z3])
+            triangles.append([x2, y2, z2])
+            triangles.append([x4, y4, z4])
+            
 
     with open(outputFile, 'w') as f:
         for i, l in enumerate(triangles):
@@ -308,6 +335,99 @@ def generatePlane(size, divisions, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
+def generateCylinder(radius, height, side, stack, outputFile):
+   
+    triangles = []
+    sides = int(side)
+    stacks = int(stack)
+
+    for i in range(sides):
+        angle = i * (2 * math.pi / sides)
+        value = (i + 1) * (2 * math.pi / sides)
+
+        # Top
+        x = radius * math.sin(angle)
+        y = height 
+        z = radius * math.cos(angle)
+
+        triangles.append((x,y,z))
+ 
+        x = radius * math.sin(value)
+        y = height 
+        z = radius * math.cos(value)
+        
+        triangles.append((x,y,z))       
+
+        x = 0
+        y = height 
+        z = 0
+
+        triangles.append((x,y,z))
+
+        for j in range(stacks):
+            
+            # Body
+            x = radius * math.sin(angle)
+            y = height  * (j / stacks)
+            z = radius * math.cos(angle)
+
+            triangles.append((x,y,z))
+    
+            x = radius * math.sin(value)
+            y = height  * (j / stacks)
+            z = radius * math.cos(value)
+            
+            triangles.append((x,y,z))       
+
+            x = radius * math.sin(angle)
+            y = height  * ((j + 1) / stacks)
+            z = radius * math.cos(angle)
+
+            triangles.append((x,y,z))
+
+
+            x = radius * math.sin(angle)
+            y = height * ((j + 1) / stacks)
+            z = radius * math.cos(angle)
+
+            triangles.append((x,y,z))
+    
+            x = radius * math.sin(value)
+            y = height * (j / stacks)
+            z = radius * math.cos(value)
+            
+            triangles.append((x,y,z))       
+
+            x = radius * math.sin(value)
+            y = height * ((j + 1) / stacks)
+            z = radius * math.cos(value)
+
+            triangles.append((x,y,z))
+        
+        # Bottom
+        x = radius * math.sin(angle)
+        y = 0 
+        z = radius * math.cos(angle)
+
+        triangles.append((x,y,z))
+ 
+        x = 0
+        y = 0
+        z = 0
+
+        triangles.append((x,y,z))
+        
+        x = radius * math.sin(value)
+        y = 0 
+        z = radius * math.cos(value)
+        
+        triangles.append((x,y,z))       
+    
+    with open(outputFile, 'w') as f:
+        for i, l in enumerate(triangles):
+            f.write(' '.join(str(x) for x in l) + '\n')
+            if (i+1) % 3 == 0:
+                f.write('\n')
 
 shapes = {
     'sphere': {
@@ -325,6 +445,10 @@ shapes = {
     'plane': {
         'func': generatePlane,
         'args': ['x', 'z', 'outputFile']
+    },
+    'cylinder':{
+        'func': generateCylinder,
+        'args': ['radius', 'height', 'sides', 'stacks', 'outputFile']
     }
 }
 

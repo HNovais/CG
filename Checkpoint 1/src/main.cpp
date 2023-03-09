@@ -92,11 +92,9 @@ void renderScene() {
 	
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
-	gluLookAt(camX + x, sin(beta) + y, camZ + z,
+	gluLookAt(camX * x, sin(beta) * y, camZ * z,
 		      lookAtX,lookAtY,lookAtZ,
 			  upX,upY,upZ);
-
-	
 
 	glBegin(GL_LINES);
 		// X axis in red
