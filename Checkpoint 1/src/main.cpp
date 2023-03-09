@@ -229,7 +229,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(100,100);
 	glutInitWindowSize(width,height);
-	glutCreateWindow("ez");
+	glutCreateWindow("grupo31");
 		
 // Required callback registry 
 	glutDisplayFunc(renderScene);
