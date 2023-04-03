@@ -31,12 +31,11 @@ float far = 0.0f;
 std::vector<float> cameraValues;
 std::vector<std::vector<float>> modelsCoords;
 
-std::vector<float> translateValues;
-std::vector<float> scaleValues;
-float rotateAngle = 0.0f;
-float rotateX = 0.0f;
-float rotateY = 0.0f;
-float rotateZ = 0.0f;
+std::vector<std::vector<float>> translateValues;
+std::vector<std::vector<float>> rotateValues;
+std::vector<std::vector<float>> scaleValues;
+
+std::vector<int> xmlValues;
 
 void changeSize(int w, int h) {
 
@@ -63,30 +62,57 @@ void changeSize(int w, int h) {
 }
 
 
-void drawShape() {
-	for (int i = 0; i < modelsCoords.size(); i++) {
-		std::vector<float> coords = modelsCoords[i];
+void drawShape(int i) {
+	std::vector<float> coords = modelsCoords[i];
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		// Draw the model
-		glBegin(GL_TRIANGLES);
-		for (int j = 0; j < coords.size(); j += 9) {
-			glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
-			glVertex3f(coords[j + 3], coords[j + 4], coords[j + 5]);
-			glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
-		}
-		glEnd();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glBegin(GL_TRIANGLES);
+	for (int j = 0; j < coords.size(); j += 9) {
+		glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
+		glVertex3f(coords[j + 3], coords[j + 4], coords[j + 5]);
+		glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
 	}
+	glEnd();
 }
 
 
-void transform() {
-	glPushMatrix();
-	glTranslatef(translateValues[0], translateValues[1], translateValues[2]);
-	printf("Translation -> X: %d  Y: %d  Z: %d", translateValues[0], translateValues[1], translateValues[2]);
-	glRotatef(rotateAngle, rotateX, rotateY, rotateZ);
-	glScalef(scaleValues[0], scaleValues[1], scaleValues[2]);
-	glPopMatrix();
+void readValues() {
+	int models = 0;
+	int transforms = 0;
+	int groups = 1;
+
+	//glPushMatrix();
+
+	for (int i = 0; i < xmlValues.size(); i++) {
+		int action = xmlValues[i];
+
+		if (action == 0) {
+			glPushMatrix();
+			groups += 1;
+		}
+
+		else if (action == 1) {
+			std::vector<float> tran = translateValues[transforms];/*
+			std::vector<float> rot = rotateValues[transforms];
+			std::vector<float> scl = scaleValues[transforms];
+			*/
+			glTranslatef(tran[0], tran[1], tran[2]);
+			//glRotatef(rot[0], rot[1], rot[2], rot[3]);
+			//glScalef(scl[0], scl[1], scl[2]);
+
+			transforms += 1;
+		}
+
+		else if (action == 2) {
+			drawShape(models);
+			models += 1;
+		}
+	}
+
+	for (int j = 0; j < groups; j++) {
+		glPopMatrix();
+	}
 }
 
 
@@ -134,8 +160,7 @@ void renderScene() {
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	transform();
-	drawShape();
+	readValues();
 
 	// End of frame
 	glutSwapBuffers();
@@ -166,7 +191,6 @@ void processKeys(unsigned char key, int xx, int yy) {
 		break;
 	}
 	glutPostRedisplay();
-
 }
 
 
@@ -210,49 +234,141 @@ void loadXML() {
 	std::cout << "Camera Projection: " << "FOV: " << fov << " Near: " << near << " Far: " << far << std::endl;
 
 	// Get the group node and its child nodes
+
 	xml_node<>* groupNode = rootNode->first_node("group");
 
-	xml_node<>* transformNode = groupNode->first_node("transform");
-	xml_node<>* translateNode = transformNode->first_node("translate");
-	xml_node<>* rotateNode = transformNode->first_node("rotate");
-	xml_node<>* scaleNode = transformNode->first_node("scale");
+	while (groupNode != NULL) {
+		xmlValues.push_back(0);
 
-	translateValues.push_back(std::stof(translateNode->first_attribute("x")->value()));
-	translateValues.push_back(std::stof(translateNode->first_attribute("y")->value()));
-	translateValues.push_back(std::stof(translateNode->first_attribute("z")->value()));
-	rotateAngle = std::stof(rotateNode->first_attribute("angle")->value());
-	rotateX = std::stof(rotateNode->first_attribute("x")->value());
-	rotateY = std::stof(rotateNode->first_attribute("y")->value());
-	rotateZ = std::stof(rotateNode->first_attribute("z")->value());
-	scaleValues.push_back(std::stof(scaleNode->first_attribute("x")->value()));
-	scaleValues.push_back(std::stof(scaleNode->first_attribute("y")->value()));
-	scaleValues.push_back(std::stof(scaleNode->first_attribute("z")->value()));
+		xml_node<>* transformNode = groupNode->first_node("transform");
+		
+		if (transformNode != NULL) {
+			xml_node<>* translateNode = transformNode->first_node("translate");
+			xml_node<>* rotateNode = transformNode->first_node("rotate");
+			xml_node<>* scaleNode = transformNode->first_node("scale");
 
-	xml_node<>* modelsNode = groupNode->first_node("models");
-	xml_node<>* modelNode = modelsNode->first_node("model");
+			float a = 0.0f;
+			float x = 0.0f;
+			float y = 0.0f;
+			float z = 0.0f;
 
-	while (modelNode != NULL)
-	{
-		char cwd[1024];
+			std::vector<float> coords;
 
-		std::string file = modelNode->first_attribute("file")->value();
+			if (translateNode != NULL) {
+				x = std::stof(translateNode->first_attribute("x")->value());
+				y = std::stof(translateNode->first_attribute("y")->value());
+				z = std::stof(translateNode->first_attribute("z")->value());
+				std::cout << "Translation: " << "X: " << x << " Y: " << y << " Z: " << z << std::endl;
+				coords.push_back(x);
+				coords.push_back(y);
+				coords.push_back(z);
 
-		std::vector<float> coords;
-		float x, y, z;
-		std::string file_path = "../src/" + file;
-		std::cout << "Loading model from file: " << file_path << std::endl;
+				translateValues.push_back(coords);
+			}
+			else {
+				x = 0;
+				y = 0;
+				z = 0;
 
-		std::ifstream infile(file_path);
+				coords.push_back(x);
+				coords.push_back(y);
+				coords.push_back(z);
 
-		while (infile >> x >> y >> z) {
-			coords.push_back(x);
-			coords.push_back(y);
-			coords.push_back(z);
+				translateValues.push_back(coords);
+			}
+
+			std::vector<float> rt;
+
+			if (rotateNode != NULL) {
+				a = std::stof(rotateNode->first_attribute("angle")->value());
+				x = std::stof(rotateNode->first_attribute("x")->value());
+				y = std::stof(rotateNode->first_attribute("y")->value());
+				z = std::stof(rotateNode->first_attribute("z")->value());
+
+				rt.push_back(a);
+				rt.push_back(x);
+				rt.push_back(y);
+				rt.push_back(z);
+
+				rotateValues.push_back(rt);
+			}
+			else {
+				a = 0.0f;
+				x = 0.0f;
+				y = 0.0f;
+				z = 0.0f;
+
+				rt.push_back(a);
+				rt.push_back(x);
+				rt.push_back(y);
+				rt.push_back(z);
+
+				rotateValues.push_back(rt);
+			}
+
+			std::vector<float> sc;
+
+			if (scaleNode != NULL) {
+				x = std::stof(scaleNode->first_attribute("x")->value());
+				y = std::stof(scaleNode->first_attribute("y")->value());
+				z = std::stof(scaleNode->first_attribute("z")->value());
+
+				sc.push_back(x);
+				sc.push_back(y);
+				sc.push_back(z);
+
+				scaleValues.push_back(sc);
+			}
+			else {
+				x = 0.0f;
+				y = 0.0f;
+				z = 0.0f;
+
+				sc.push_back(x);
+				sc.push_back(y);
+				sc.push_back(z);
+
+				scaleValues.push_back(sc);
+			}
+			
+			xmlValues.push_back(1);
 		}
 
-		modelsCoords.push_back(coords);
+		xml_node<>* modelsNode = groupNode->first_node("models");
+		
+		if (modelsNode != NULL) {
+			xml_node<>* modelNode = modelsNode->first_node("model");
 
-		modelNode = modelNode->next_sibling("model");
+			while (modelNode != NULL)
+			{
+				char cwd[1024];
+
+				std::string file = modelNode->first_attribute("file")->value();
+
+				std::vector<float> coords;
+				float x, y, z;
+				std::string file_path = "../src/" + file;
+				std::cout << "Loading model from file: " << file_path << std::endl;
+
+				std::ifstream infile(file_path);
+
+				while (infile >> x >> y >> z) {
+					coords.push_back(x);
+					coords.push_back(y);
+					coords.push_back(z);
+				}
+
+				modelsCoords.push_back(coords);
+
+				modelNode = modelNode->next_sibling("model");
+			}
+
+			xmlValues.push_back(2);
+		}
+
+		xml_node<>* nextNode = groupNode->first_node("group");
+
+		groupNode = nextNode;
 	}
 }
 
