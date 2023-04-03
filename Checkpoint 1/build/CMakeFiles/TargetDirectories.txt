@@ -1,3 +1,0 @@
-D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/trabalho.dir
-D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/ALL_BUILD.dir
-D:/Universidade/CG/CG/Checkpoint 1/build/CMakeFiles/ZERO_CHECK.dir
