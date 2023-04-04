@@ -5,6 +5,7 @@
 #include <string>
 #include <io.h>
 #include <direct.h>
+#include <structs.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -16,7 +17,11 @@
 #include "rapidxml_utils.hpp"
 #include "rapidxml_print.hpp"
 
+
 using namespace rapidxml;
+using namespace std;
+
+XML_Struct estrutura;
 
 float alpha = 0.0f;
 float beta = 0.0f;
@@ -115,6 +120,25 @@ void readValues() {
 	}
 }
 
+void transformation(Transform transform) {
+	if (transform.type=="translate"){}
+	else if (transform.type == "rotate") {}
+	else if (transform.type == "scale") {}
+}
+
+void processgroup(Group group) {
+	glPushMatrix();
+
+	for (int i;i < group.transforms.size();i++) {
+		processgroup(group.groups[i]);
+	}
+
+	for (int i;i < group.groups.size();i++) {
+		processgroup(group.groups[i]);
+	}
+
+	glPopMatrix();
+}
 
 void renderScene() {
 
@@ -136,9 +160,15 @@ void renderScene() {
 	
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
+	/*
 	gluLookAt(x, y, z,
 		      lookAtX,lookAtY,lookAtZ,
 			  upX,upY,upZ);
+	*/
+
+	gluLookAt(estrutura.camera.position.x, estrutura.camera.position.y, estrutura.camera.position.z,
+		estrutura.camera.lookAt.x, estrutura.camera.lookAt.y, estrutura.camera.lookAt.z,
+		estrutura.camera.up.x, estrutura.camera.up.y, estrutura.camera.up.z);
 
 	glBegin(GL_LINES);
 		// X axis in red
@@ -160,8 +190,8 @@ void renderScene() {
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
+	//processgroup(estrutura.group);
 	readValues();
-
 	// End of frame
 	glutSwapBuffers();
 }
@@ -194,7 +224,7 @@ void processKeys(unsigned char key, int xx, int yy) {
 }
 
 
-void loadXML() {
+void loadXML(XML_Struct& estrutura) {
 
 	// Load the XML file
 	file<> xmlFile("../src/configuration.xml");
@@ -211,6 +241,9 @@ void loadXML() {
 	width = std::stoi(windowNode->first_attribute("width")->value());
 	height = std::stoi(windowNode->first_attribute("height")->value());
 
+	estrutura.window.width= stoi(windowNode->first_attribute("width")->value());
+	estrutura.window.height = stoi(windowNode->first_attribute("height")->value());
+
 	// Get the camera node and its children
 	xml_node<>* cameraNode = rootNode->first_node("camera");
 	xml_node<>* positionNode = cameraNode->first_node("position");
@@ -222,16 +255,31 @@ void loadXML() {
 	cameraValues.push_back(std::stof(positionNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(positionNode->first_attribute("z")->value()));
 	std::cout << "Camera Values: " << "X: " << std::stof(positionNode->first_attribute("x")->value()) << " Y: " << std::stof(positionNode->first_attribute("y")->value()) << " Z: " << std::stof(positionNode->first_attribute("z")->value()) << std::endl;
+	estrutura.camera.position.x = stof(positionNode->first_attribute("x")->value());
+	estrutura.camera.position.y = stof(positionNode->first_attribute("y")->value());
+	estrutura.camera.position.z = stof(positionNode->first_attribute("z")->value());
+
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("x")->value()));
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(lookAtNode->first_attribute("z")->value()));
+	estrutura.camera.lookAt.x = stof(lookAtNode->first_attribute("x")->value());
+	estrutura.camera.lookAt.y = stof(lookAtNode->first_attribute("y")->value());
+	estrutura.camera.lookAt.z = stof(lookAtNode->first_attribute("z")->value());
+
 	cameraValues.push_back(std::stof(upNode->first_attribute("x")->value()));
 	cameraValues.push_back(std::stof(upNode->first_attribute("y")->value()));
 	cameraValues.push_back(std::stof(upNode->first_attribute("z")->value()));
+	estrutura.camera.up.x = stof(upNode->first_attribute("x")->value());
+	estrutura.camera.up.y = stof(upNode->first_attribute("y")->value());
+	estrutura.camera.up.z = stof(upNode->first_attribute("z")->value());
+
 	fov = std::stof(projectionNode->first_attribute("fov")->value());
 	near = std::stof(projectionNode->first_attribute("near")->value());
 	far = std::stof(projectionNode->first_attribute("far")->value());
 	std::cout << "Camera Projection: " << "FOV: " << fov << " Near: " << near << " Far: " << far << std::endl;
+	estrutura.camera.projection.far= stof(projectionNode->first_attribute("fov")->value());;
+	estrutura.camera.projection.fov= stof(projectionNode->first_attribute("far")->value());;
+	estrutura.camera.projection.near=stof(projectionNode->first_attribute("near")->value());
 
 	// Get the group node and its child nodes
 
@@ -372,10 +420,9 @@ void loadXML() {
 	}
 }
 
-
 int main(int argc, char **argv) {
 
-	loadXML();
+	loadXML(estrutura);
 
 // init GLUT and the window
 	glutInit(&argc, argv);
