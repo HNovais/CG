@@ -81,6 +81,20 @@ void drawShape(int i) {
 	glEnd();
 }
 
+void drawShape2(Model model) {
+	vector<float> coords = model.points;
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	glBegin(GL_TRIANGLES);
+	for (int j = 0; j < coords.size(); j += 9) {
+		glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
+		glVertex3f(coords[j + 3], coords[j + 4], coords[j + 5]);
+		glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
+	}
+	glEnd();
+}
+
 
 void readValues() {
 	int models = 0;
@@ -121,16 +135,26 @@ void readValues() {
 }
 
 void transformation(Transform transform) {
-	if (transform.type=="translate"){}
-	else if (transform.type == "rotate") {}
-	else if (transform.type == "scale") {}
+	if (transform.type=="translate"){
+		glTranslated(transform.x, transform.y, transform.z);
+	}
+	else if (transform.type == "rotate") {
+		glRotated(transform.angle,transform.x, transform.y, transform.z);
+	}
+	else if (transform.type == "scale") {
+		glScaled(transform.x, transform.y, transform.z);
+	}
 }
 
 void processgroup(Group group) {
 	glPushMatrix();
 
 	for (int i;i < group.transforms.size();i++) {
-		processgroup(group.groups[i]);
+		transformation(group.transforms[i]);
+	}
+
+	for (int i;i < group.models.size();i++) {
+		drawShape2(group.models[i]);
 	}
 
 	for (int i;i < group.groups.size();i++) {

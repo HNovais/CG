@@ -45,7 +45,7 @@ struct Transform {
 };
 
 struct Model {
-    string file;
+    vector<float>points;
 };
 
 struct Group {
