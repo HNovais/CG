@@ -25,6 +25,8 @@ XML_Struct estrutura;
 
 float alpha = 0.0f;
 float beta = 0.0f;
+float offsetZ = 0.0f;
+float offsetX = 0.0f;
 
 void changeSize(int w, int h) {
 
@@ -49,6 +51,7 @@ void changeSize(int w, int h) {
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
 }
+
 
 void drawShape(Model model) {
 	vector<float> coords = model.points;
@@ -77,6 +80,7 @@ void transformation(Transform transform) {
 	}
 }
 
+
 void processgroup(Group group) {
 	glPushMatrix();
 
@@ -95,6 +99,7 @@ void processgroup(Group group) {
 	glPopMatrix();
 }
 
+
 void renderScene() {
 
 	// clear buffers
@@ -106,7 +111,7 @@ void renderScene() {
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
 
-	gluLookAt(estrutura.camera.position.x, estrutura.camera.position.y, estrutura.camera.position.z,
+	gluLookAt(estrutura.camera.position.x * camX + offsetX, estrutura.camera.position.y, estrutura.camera.position.z * camZ + offsetZ,
 		estrutura.camera.lookAt.x, estrutura.camera.lookAt.y, estrutura.camera.lookAt.z,
 		estrutura.camera.up.x, estrutura.camera.up.y, estrutura.camera.up.z);
 
@@ -139,23 +144,29 @@ void renderScene() {
 
 void processKeys(unsigned char key, int xx, int yy) {
 	switch (key) {
-	case 'a':
-	case 'A':
-		alpha -= 0.1f;
-		break;
-	case 'd':
-	case 'D':
+	case 'q':
+	case 'Q':
 		alpha += 0.1f;
+		break;
+	case 'e':
+	case 'E':
+		alpha -= 0.1f;
 		break;
 	case 'w':
 	case 'W':
-		if(beta <= 1.5f)
-			beta += 0.1f;
+		offsetZ += 1.0f;
 		break;
 	case 's':
 	case 'S':
-		if(beta >= -1.5f)
-			beta -= 0.1f;
+		offsetZ -= 1.0f;
+		break;
+	case 'd':
+	case 'D':
+		offsetX += 1.0f;
+		break;
+	case 'a':
+	case 'A':
+		offsetX -= 1.0f;
 		break;
 	default:
 		break;
@@ -307,6 +318,7 @@ void loadXML(XML_Struct& estrutura) {
 	if (groupNode != NULL) 
 		estrutura.group = readGroup(estrutura.group, groupNode);
 }
+
 
 int main(int argc, char **argv) {
 
