@@ -45,7 +45,8 @@ struct Transform {
 };
 
 struct Model {
-    vector<float>points;
+    vector<float> colour;
+    vector<float> points;
 };
 
 struct Group {

@@ -58,6 +58,9 @@ void drawShape(Model model) {
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	if (model.colour.size() > 0)
+		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
+
 	glBegin(GL_TRIANGLES);
 	for (int j = 0; j < coords.size(); j += 9) {
 		glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
@@ -227,6 +230,9 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 	}
 
 	if (modelsNode != NULL) {
+		xml_node<>* colourNode = modelsNode->first_node("colour");
+
+
 		xml_node<>* modelNode = modelsNode->first_node("model");
 
 		while (modelNode != NULL)
@@ -249,8 +255,18 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 				model.points.push_back(z);
 			}
 
-			group.models.push_back(model);
+			if (colourNode != NULL) {
+				x = stof(colourNode->first_attribute("r")->value());
+				y = stof(colourNode->first_attribute("g")->value());
+				z = stof(colourNode->first_attribute("b")->value());
 
+				model.colour.push_back(x);
+				model.colour.push_back(y);
+				model.colour.push_back(z);
+			}
+
+			group.models.push_back(model);
+			
 			modelNode = modelNode->next_sibling("model");
 		}
 	}
