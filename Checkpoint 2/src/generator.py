@@ -487,7 +487,6 @@ def generateTorus(outerRadius, innerRadius, side, ring, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
-
 shapes = {
     'sphere': {
         'func': generateSphere,

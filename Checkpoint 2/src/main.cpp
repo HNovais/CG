@@ -184,10 +184,12 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 	xml_node<>* groupsNode = groupNode->first_node("group");
 
 	if (transformNode != NULL) {
+		bool t = false, r = false, s = false;
+		
 		for (xml_node<>* childNode = transformNode->first_node(); childNode != NULL; childNode = childNode->next_sibling()) {
 			string nodeName = childNode->name();
 
-			if (nodeName == "translate") {
+			if (nodeName == "translate" && !t) {
 				Transform translate;
 
 				translate.type = "translate";
@@ -198,9 +200,10 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 				printf("Tranlation: X: %.1f  Y: %.1f  Z: %.1f\n", translate.x, translate.y, translate.z);
 
 				group.transforms.push_back(translate);
+				t = true;
 			}
 
-			if (nodeName == "rotate") {
+			if (nodeName == "rotate" && !r) {
 				Transform rotate;
 
 				rotate.type = "rotate";
@@ -212,9 +215,10 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 				printf("Rotation: Angle: %.1f X: %.1f  Y: %.1f  Z: %.1f\n", rotate.angle, rotate.x, rotate.y, rotate.z);
 
 				group.transforms.push_back(rotate);
+				r = true;
 			}
 
-			if (nodeName == "scale") {
+			if (nodeName == "scale" && !s) {
 				Transform scale;
 
 				scale.type = "scale";
@@ -225,6 +229,7 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 				printf("Scale: X: %.1f  Y: %.1f  Z: %.1f\n", scale.x, scale.y, scale.z);
 
 				group.transforms.push_back(scale);
+				s = true;
 			}
 		}
 	}

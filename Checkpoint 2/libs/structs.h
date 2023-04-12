@@ -30,12 +30,6 @@ struct Camera {
     Projection projection;
 };
 
-struct TransformCount {
-    int translate;
-    int scale;
-    int rotate;
-};
-
 struct Transform {
     string type;
     float x;
