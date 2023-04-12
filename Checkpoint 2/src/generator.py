@@ -410,6 +410,84 @@ def generateCylinder(radius, height, side, stack, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
+def generateTorus(outerRadius, innerRadius, side, ring, outputFile):
+    triangles = []
+    sides = int(side)
+    rings = int(ring)
+    
+    for i in range(sides):
+        theta = i * (2 * math.pi / sides)
+        cosTheta = math.cos(theta)
+        sinTheta = math.sin(theta)
+        
+        for j in range(rings):
+            phi = j * (2 * math.pi / rings)
+            cosPhi = math.cos(phi)
+            sinPhi = math.sin(phi)
+            
+            x = (outerRadius + innerRadius * cosPhi) * cosTheta
+            y = innerRadius * sinPhi
+            z = (outerRadius + innerRadius * cosPhi) * sinTheta
+            
+            triangles.append((x, y, z))
+            
+            nextTheta = (theta + 2 * math.pi / sides) % (2 * math.pi)
+            nextCosTheta = math.cos(nextTheta)
+            nextSinTheta = math.sin(nextTheta)
+            
+            nextPhi = (phi + 2 * math.pi / rings) % (2 * math.pi)
+            nextCosPhi = math.cos(nextPhi)
+            nextSinPhi = math.sin(nextPhi)
+            
+            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
+            nextY = innerRadius * nextSinPhi
+            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
+            
+            triangles.append((nextX, nextY, nextZ))
+            
+            nextPhi = phi + 2 * math.pi / rings
+            nextCosPhi = math.cos(nextPhi)
+            nextSinPhi = math.sin(nextPhi)
+            
+            nextX = (outerRadius + innerRadius * nextCosPhi) * cosTheta
+            nextY = innerRadius * nextSinPhi
+            nextZ = (outerRadius + innerRadius * nextCosPhi) * sinTheta
+            
+            triangles.append((nextX, nextY, nextZ))
+            
+            x = (outerRadius + innerRadius * cosPhi) * cosTheta
+            y = innerRadius * sinPhi
+            z = (outerRadius + innerRadius * cosPhi) * sinTheta
+            
+            triangles.append((x, y, z))
+            
+            nextPhi = phi + 2 * math.pi / rings
+            nextCosPhi = math.cos(nextPhi)
+            nextSinPhi = math.sin(nextPhi)
+            
+            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
+            nextY = innerRadius * nextSinPhi
+            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
+            
+            triangles.append((nextX, nextY, nextZ))
+            
+            nextTheta = (theta + 2 * math.pi / sides) % (2 * math.pi)
+            nextCosTheta = math.cos(nextTheta)
+            nextSinTheta = math.sin(nextTheta)
+            
+            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
+            nextY = innerRadius * nextSinPhi
+            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
+            
+            triangles.append((nextX, nextY, nextZ))
+    
+    with open(outputFile, 'w') as f:
+        for i, l in enumerate(triangles):
+            f.write(' '.join(str(x) for x in l) + '\n')
+            if (i+1) % 3 == 0:
+                f.write('\n')
+
+
 shapes = {
     'sphere': {
         'func': generateSphere,
@@ -430,6 +508,10 @@ shapes = {
     'cylinder':{
         'func': generateCylinder,
         'args': ['radius', 'height', 'sides', 'stacks', 'outputFile']
+    },
+    'torus': {
+        'func': generateTorus,
+        'args': ['outerRadius', 'innerRadius', 'side', 'ring', 'outputFile']
     }
 }
 
