@@ -319,12 +319,12 @@ def generatePlane(size, divisions, outputFile):
 def generateCylinder(radius, height, side, stack, outputFile):
    
     triangles = []
-    sides = int(side)
+    slides = int(side)
     stacks = int(stack)
 
-    for i in range(sides):
-        angle = i * (2 * math.pi / sides)
-        value = (i + 1) * (2 * math.pi / sides)
+    for i in range(slides):
+        angle = i * (2 * math.pi / slides)
+        value = (i + 1) * (2 * math.pi / slides)
 
         # Top
         x = radius * math.sin(angle)
@@ -410,74 +410,74 @@ def generateCylinder(radius, height, side, stack, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
-def generateTorus(outerRadius, innerRadius, side, ring, outputFile):
+def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
     triangles = []
-    sides = int(side)
-    rings = int(ring)
+    slides = int(slide)
+    stacks = int(stack)
     
-    for i in range(sides):
-        theta = i * (2 * math.pi / sides)
-        cosTheta = math.cos(theta)
-        sinTheta = math.sin(theta)
+    for i in range(slides):
+        alpha = i * (2 * math.pi / slides)
+        cosalpha = math.cos(alpha)
+        sinalpha = math.sin(alpha)
         
-        for j in range(rings):
-            phi = j * (2 * math.pi / rings)
-            cosPhi = math.cos(phi)
-            sinPhi = math.sin(phi)
+        for j in range(stacks):
+            beta = j * (2 * math.pi / stacks)
+            cosbeta = math.cos(beta)
+            sinbeta = math.sin(beta)
             
-            x = (outerRadius + innerRadius * cosPhi) * cosTheta
-            y = innerRadius * sinPhi
-            z = (outerRadius + innerRadius * cosPhi) * sinTheta
-            
-            triangles.append((x, y, z))
-            
-            nextTheta = (theta + 2 * math.pi / sides) % (2 * math.pi)
-            nextCosTheta = math.cos(nextTheta)
-            nextSinTheta = math.sin(nextTheta)
-            
-            nextPhi = (phi + 2 * math.pi / rings) % (2 * math.pi)
-            nextCosPhi = math.cos(nextPhi)
-            nextSinPhi = math.sin(nextPhi)
-            
-            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
-            nextY = innerRadius * nextSinPhi
-            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
-            
-            triangles.append((nextX, nextY, nextZ))
-            
-            nextPhi = phi + 2 * math.pi / rings
-            nextCosPhi = math.cos(nextPhi)
-            nextSinPhi = math.sin(nextPhi)
-            
-            nextX = (outerRadius + innerRadius * nextCosPhi) * cosTheta
-            nextY = innerRadius * nextSinPhi
-            nextZ = (outerRadius + innerRadius * nextCosPhi) * sinTheta
-            
-            triangles.append((nextX, nextY, nextZ))
-            
-            x = (outerRadius + innerRadius * cosPhi) * cosTheta
-            y = innerRadius * sinPhi
-            z = (outerRadius + innerRadius * cosPhi) * sinTheta
+            x = (outerRadius + innerRadius * cosbeta) * cosalpha
+            y = innerRadius * sinbeta
+            z = (outerRadius + innerRadius * cosbeta) * sinalpha
             
             triangles.append((x, y, z))
             
-            nextPhi = phi + 2 * math.pi / rings
-            nextCosPhi = math.cos(nextPhi)
-            nextSinPhi = math.sin(nextPhi)
+            nextalpha = (alpha + 2 * math.pi / slides) % (2 * math.pi)
+            nextCosalpha = math.cos(nextalpha)
+            nextSinalpha = math.sin(nextalpha)
             
-            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
-            nextY = innerRadius * nextSinPhi
-            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
+            nextbeta = (beta + 2 * math.pi / stacks) % (2 * math.pi)
+            nextCosbeta = math.cos(nextbeta)
+            nextSinbeta = math.sin(nextbeta)
+            
+            nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
+            nextY = innerRadius * nextSinbeta
+            nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
             
             triangles.append((nextX, nextY, nextZ))
             
-            nextTheta = (theta + 2 * math.pi / sides) % (2 * math.pi)
-            nextCosTheta = math.cos(nextTheta)
-            nextSinTheta = math.sin(nextTheta)
+            nextbeta = beta + 2 * math.pi / stacks
+            nextCosbeta = math.cos(nextbeta)
+            nextSinbeta = math.sin(nextbeta)
             
-            nextX = (outerRadius + innerRadius * nextCosPhi) * nextCosTheta
-            nextY = innerRadius * nextSinPhi
-            nextZ = (outerRadius + innerRadius * nextCosPhi) * nextSinTheta
+            nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
+            nextY = innerRadius * nextSinbeta
+            nextZ = (outerRadius + innerRadius * nextCosbeta) * sinalpha
+            
+            triangles.append((nextX, nextY, nextZ))
+            
+            x = (outerRadius + innerRadius * cosbeta) * cosalpha
+            y = innerRadius * sinbeta
+            z = (outerRadius + innerRadius * cosbeta) * sinalpha
+            
+            triangles.append((x, y, z))
+            
+            nextbeta = beta + 2 * math.pi / stacks
+            nextCosbeta = math.cos(nextbeta)
+            nextSinbeta = math.sin(nextbeta)
+            
+            nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
+            nextY = innerRadius * nextSinbeta
+            nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
+            
+            triangles.append((nextX, nextY, nextZ))
+            
+            nextalpha = (alpha + 2 * math.pi / slides) % (2 * math.pi)
+            nextCosalpha = math.cos(nextalpha)
+            nextSinalpha = math.sin(nextalpha)
+            
+            nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
+            nextY = innerRadius * nextSinbeta
+            nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
             
             triangles.append((nextX, nextY, nextZ))
     
@@ -506,7 +506,7 @@ shapes = {
     },
     'cylinder':{
         'func': generateCylinder,
-        'args': ['radius', 'height', 'sides', 'stacks', 'outputFile']
+        'args': ['radius', 'height', 'slides', 'stacks', 'outputFile']
     },
     'torus': {
         'func': generateTorus,
