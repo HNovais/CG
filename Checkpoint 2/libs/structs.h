@@ -49,10 +49,16 @@ struct Group {
     vector<Group> groups;
 };
 
+struct Shortcut{
+    bool line;
+    bool axis;
+};
+
 struct XML_Struct {
     Window window;
     Camera camera;
     Group group;
+    Shortcut shortcut;
 };
 
 #endif

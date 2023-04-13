@@ -41,7 +41,7 @@
                 <scale x="0.04" y="0.04" z="0.04" />
             </transform>
             <models>
-                <colour r="0.5" g="0.4" b="0.3" />
+                <colour r="0" g="0" b="1" />
                 <model file="sphere.3d" />
             </models>
             <group> <!-- Moon -->

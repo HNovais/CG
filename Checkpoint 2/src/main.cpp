@@ -28,6 +28,8 @@ float beta = 0.0f;
 float offsetZ = 0.0f;
 float offsetX = 0.0f;
 
+float dx = 0, dy = 0, dz = 0;
+
 void changeSize(int w, int h) {
 
 	// Prevent a divide by zero, when window is too short
@@ -44,10 +46,10 @@ void changeSize(int w, int h) {
 	glLoadIdentity();
 	
 	// Set the viewport to be the entire window
-	glViewport(0, 0, estrutura.window.width, estrutura.window.height);
+	glViewport(0, 0, w, h);
 
-	gluPerspective(estrutura.camera.projection.fov, estrutura.window.width / estrutura.window.height, estrutura.camera.projection.near, estrutura.camera.projection.far);
-
+	//gluPerspective(estrutura.camera.projection.fov, estrutura.window.width / estrutura.window.height, estrutura.camera.projection.near, estrutura.camera.projection.far);
+	gluPerspective(45, ratio, 1, 1000);
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -55,8 +57,8 @@ void changeSize(int w, int h) {
 
 void drawShape(Model model) {
 	vector<float> coords = model.points;
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (estrutura.shortcut.line==true){ glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
+	else { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
 	if (model.colour.size() > 0)
 		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
@@ -114,11 +116,12 @@ void renderScene() {
 	float camX = cos(beta) * sin(alpha);
 	float camZ = cos(beta) * cos(alpha);
 
-	gluLookAt(estrutura.camera.position.x * camX + offsetX, estrutura.camera.position.y, estrutura.camera.position.z * camZ + offsetZ,
+	gluLookAt(estrutura.camera.position.x , estrutura.camera.position.y, estrutura.camera.position.z,
 		estrutura.camera.lookAt.x, estrutura.camera.lookAt.y, estrutura.camera.lookAt.z,
 		estrutura.camera.up.x, estrutura.camera.up.y, estrutura.camera.up.z);
 
-	glBegin(GL_LINES);
+	if (estrutura.shortcut.axis != true) {
+		glBegin(GL_LINES);
 		// X axis in red
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glVertex3f(
@@ -134,7 +137,8 @@ void renderScene() {
 		glVertex3f(0.0f, 0.0f,
 			-100.0f);
 		glVertex3f(0.0f, 0.0f, 100.0f);
-	glEnd();
+		glEnd();
+	}
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -144,8 +148,59 @@ void renderScene() {
 	glutSwapBuffers();
 }
 
-
 void processKeys(unsigned char key, int xx, int yy) {
+	dx = estrutura.camera.lookAt.x - estrutura.camera.position.x;
+	dy = 0;
+	dz = estrutura.camera.lookAt.z - estrutura.camera.position.z;
+
+	float rx = -(dz * 1);
+	float ry = 0;
+	float rz = dx * 1;
+
+	switch (key) {
+
+	case 'w':
+		estrutura.camera.position.x = estrutura.camera.position.x + dx;
+		estrutura.camera.position.z = estrutura.camera.position.z + dz;
+		break;
+
+	case 'a':
+		estrutura.camera.position.x -= rx;
+		estrutura.camera.position.z -= rz;
+		break;
+
+	case 's':
+		estrutura.camera.position.x = estrutura.camera.position.x - dx;
+		estrutura.camera.position.z = estrutura.camera.position.z - dz;
+		break;
+
+	case 'd':
+		estrutura.camera.position.x += rx;
+		estrutura.camera.position.z += rz;
+		break;
+
+	case 'q':
+		alpha += 0.1;
+		break;
+
+	case 'e':
+		alpha -= 0.1;
+		break;
+	case 'l':
+		if (estrutura.shortcut.line == true)estrutura.shortcut.line = false;
+		else estrutura.shortcut.line = true;
+		break;
+	case 'k':
+		if (estrutura.shortcut.axis == true)estrutura.shortcut.axis = false;
+		else estrutura.shortcut.axis = true;
+		break;
+	}
+	//camY = 1 + hf(camX + th / 2, camZ + tw / 2);
+
+	estrutura.camera.lookAt.x = estrutura.camera.position.x + sin(alpha);
+	estrutura.camera.lookAt.z = estrutura.camera.position.z + cos(alpha);
+	estrutura.camera.lookAt.y = estrutura.camera.position.y;
+	/*
 	switch (key) {
 	case 'q':
 	case 'Q':
@@ -171,12 +226,33 @@ void processKeys(unsigned char key, int xx, int yy) {
 	case 'A':
 		offsetX -= 1.0f;
 		break;
+	case 'l':
+		if (estrutura.shortcut.line == true)estrutura.shortcut.line = false;
+		else estrutura.shortcut.line = true;
 	default:
 		break;
 	}
+	*/
 	glutPostRedisplay();
 }
 
+void processSpecialKeys(int key, int xx, int yy) {
+	
+	switch (key) {
+	case GLUT_KEY_UP:
+		estrutura.camera.position.y = estrutura.camera.position.y + 1;
+		break;
+
+	case GLUT_KEY_DOWN:
+		estrutura.camera.position.y = estrutura.camera.position.y - 1;
+		break;
+
+	}
+	estrutura.camera.lookAt.y = estrutura.camera.position.y;
+	
+	glutPostRedisplay();
+
+}
 
 Group readGroup(Group group, xml_node<>* groupNode) {
 	xml_node<>* transformNode = groupNode->first_node("transform");
@@ -358,7 +434,7 @@ int main(int argc, char **argv) {
 	
 // Callback registration for keyboard processing
 	glutKeyboardFunc(processKeys);
-
+	glutSpecialFunc(processSpecialKeys);
 //  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
