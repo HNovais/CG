@@ -439,42 +439,26 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
             nextCosbeta = math.cos(nextbeta)
             nextSinbeta = math.sin(nextbeta)
             
-            nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
-            nextY = innerRadius * nextSinbeta
-            nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
-            
-            triangles.append((nextX, nextY, nextZ))
-            
-            nextbeta = beta + 2 * math.pi / stacks
-            nextCosbeta = math.cos(nextbeta)
-            nextSinbeta = math.sin(nextbeta)
-            
             nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
             nextY = innerRadius * nextSinbeta
             nextZ = (outerRadius + innerRadius * nextCosbeta) * sinalpha
             
             triangles.append((nextX, nextY, nextZ))
             
-            x = (outerRadius + innerRadius * cosbeta) * cosalpha
-            y = innerRadius * sinbeta
-            z = (outerRadius + innerRadius * cosbeta) * sinalpha
-            
-            triangles.append((x, y, z))
-            
-            nextbeta = beta + 2 * math.pi / stacks
-            nextCosbeta = math.cos(nextbeta)
-            nextSinbeta = math.sin(nextbeta)
-            
-            nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
-            nextY = innerRadius * nextSinbeta
-            nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
+            nextX = (outerRadius + innerRadius * cosbeta) * nextCosalpha
+            nextY = innerRadius * sinbeta
+            nextZ = (outerRadius + innerRadius * cosbeta) * nextSinalpha
+
+            triangles.append((nextX, nextY, nextZ))
             
             triangles.append((nextX, nextY, nextZ))
             
-            nextalpha = (alpha + 2 * math.pi / slides) % (2 * math.pi)
-            nextCosalpha = math.cos(nextalpha)
-            nextSinalpha = math.sin(nextalpha)
+            nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
+            nextY = innerRadius * nextSinbeta
+            nextZ = (outerRadius + innerRadius * nextCosbeta) * sinalpha
             
+            triangles.append((nextX, nextY, nextZ))
+
             nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
             nextY = innerRadius * nextSinbeta
             nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
