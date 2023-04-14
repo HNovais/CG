@@ -148,6 +148,7 @@ void renderScene() {
 	glutSwapBuffers();
 }
 
+
 void processKeys(unsigned char key, int xx, int yy) {
 	dx = estrutura.camera.lookAt.x - estrutura.camera.position.x;
 	dy = 0;
@@ -236,6 +237,7 @@ void processKeys(unsigned char key, int xx, int yy) {
 	glutPostRedisplay();
 }
 
+
 void processSpecialKeys(int key, int xx, int yy) {
 	
 	switch (key) {
@@ -253,6 +255,7 @@ void processSpecialKeys(int key, int xx, int yy) {
 	glutPostRedisplay();
 
 }
+
 
 Group readGroup(Group group, xml_node<>* groupNode) {
 	xml_node<>* transformNode = groupNode->first_node("transform");
