@@ -196,44 +196,11 @@ void processKeys(unsigned char key, int xx, int yy) {
 		else estrutura.shortcut.axis = true;
 		break;
 	}
-	//camY = 1 + hf(camX + th / 2, camZ + tw / 2);
 
 	estrutura.camera.lookAt.x = estrutura.camera.position.x + sin(alpha);
 	estrutura.camera.lookAt.z = estrutura.camera.position.z + cos(alpha);
 	estrutura.camera.lookAt.y = estrutura.camera.position.y;
-	/*
-	switch (key) {
-	case 'q':
-	case 'Q':
-		alpha += 0.1f;
-		break;
-	case 'e':
-	case 'E':
-		alpha -= 0.1f;
-		break;
-	case 'w':
-	case 'W':
-		offsetZ += 1.0f;
-		break;
-	case 's':
-	case 'S':
-		offsetZ -= 1.0f;
-		break;
-	case 'd':
-	case 'D':
-		offsetX += 1.0f;
-		break;
-	case 'a':
-	case 'A':
-		offsetX -= 1.0f;
-		break;
-	case 'l':
-		if (estrutura.shortcut.line == true)estrutura.shortcut.line = false;
-		else estrutura.shortcut.line = true;
-	default:
-		break;
-	}
-	*/
+
 	glutPostRedisplay();
 }
 
