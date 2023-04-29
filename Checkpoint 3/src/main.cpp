@@ -269,7 +269,8 @@ void rotateObject(Transform transform) {
 
 void transformation(Transform transform) {
 	if (transform.type=="translate"){
-		glTranslatef(transform.x, transform.y, transform.z);
+		translateObject(transform);
+		//glTranslatef(transform.x, transform.y, transform.z);
 	}
 	else if (transform.type == "rotate") {
 		rotateObject(transform);
