@@ -40,7 +40,7 @@ float dx = 0, dy = 0, dz = 0;
 void prepareData(Group& g)
 {
 	string file_name;
-	for (Model model : g.models)
+	for (Model& model : g.models)
 	{
 		file_name = model.name;
 		if (vertices.find(file_name) == vertices.end())
@@ -55,10 +55,9 @@ void prepareData(Group& g)
 				model.points.data(),
 				GL_STATIC_DRAW);
 		}
-
-		for (Group group : g.groups) {
-			prepareData(group);
-		}
+	}
+	for (Group& group : g.groups) {
+		prepareData(group);
 	}
 }
 
@@ -134,7 +133,7 @@ void getCatmullRomPoint(float t, float* p0, float* p1, float* p2, float* p3, flo
 }
 
 
-void getGlobalCatmullRomPoint(float gt, float* pos, float* deriv, Transform transform) {
+void getGlobalCatmullRomPoint(float gt, float* pos, float* deriv, Transform& transform) {
 
 	int points = transform.movement.size() / 3;
 
@@ -153,7 +152,7 @@ void getGlobalCatmullRomPoint(float gt, float* pos, float* deriv, Transform tran
 }
 
 
-void renderCatmullRomCurve(Transform transform) {
+void renderCatmullRomCurve(Transform& transform) {
 	int tesselation = 100;
 
 	glBegin(GL_LINE_LOOP);
@@ -192,7 +191,7 @@ void changeSize(int w, int h) {
 
 
 void drawShape(Model& model){
-	/*
+	
 	string file_name = model.name;
 	if (estrutura.shortcut.line == true)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -205,8 +204,9 @@ void drawShape(Model& model){
 	prepareData(estrutura.group);
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);*/
-
+	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
+	
+	/*
 	vector<float> coords = model.points;
 	if (estrutura.shortcut.line == true) { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
 	else { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
@@ -221,10 +221,11 @@ void drawShape(Model& model){
 		glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
 	}
 	glEnd();
+	*/
 }
 
 
-void translateObject(Transform transform) {
+void translateObject(Transform& transform) {
 	float t = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 	float gt = fmod(t, transform.time) / transform.time; 
 
@@ -254,7 +255,7 @@ void translateObject(Transform transform) {
 }
 
 
-void rotateObject(Transform transform) {
+void rotateObject(Transform& transform) {
 	float angle;
 	if (transform.time != 0) {
 		float time = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; 
@@ -267,7 +268,7 @@ void rotateObject(Transform transform) {
 }
 
 
-void transformation(Transform transform) {
+void transformation(Transform& transform) {
 	if (transform.type=="translate"){
 		translateObject(transform);
 		//glTranslatef(transform.x, transform.y, transform.z);
@@ -281,7 +282,7 @@ void transformation(Transform transform) {
 }
 
 
-void processgroup(Group group) {
+void processgroup(Group& group) {
 	glPushMatrix();
 
 	for (int i = 0; i < group.transforms.size(); i++) {
@@ -434,7 +435,7 @@ void processSpecialKeys(int key, int xx, int yy) {
 }
 
 
-Group readGroup(Group group, xml_node<>* groupNode) {
+Group readGroup(Group& group, xml_node<>* groupNode) {
 	xml_node<>* transformNode = groupNode->first_node("transform");
 	xml_node<>* modelsNode = groupNode->first_node("models");
 	xml_node<>* groupsNode = groupNode->first_node("group");
@@ -557,6 +558,7 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 			string file = modelNode->first_attribute("file")->value();
 
 			Model model;
+			model.name = file;
 
 			float x, y, z;
 			string file_path = "../out/" + file;
@@ -598,7 +600,7 @@ Group readGroup(Group group, xml_node<>* groupNode) {
 }
 
 
-void loadXML(XML_Struct& estrutura) {
+void loadXML() {
 
 	// Load the XML file
 	file<> xmlFile("../xml/test_3_1.xml");
@@ -653,7 +655,7 @@ void loadXML(XML_Struct& estrutura) {
 
 int main(int argc, char** argv) {
 
-	loadXML(estrutura);
+	loadXML();
 
 	// init GLUT and the window
 	glutInit(&argc, argv);
@@ -673,7 +675,7 @@ int main(int argc, char** argv) {
 	glutSpecialFunc(processSpecialKeys);
 
 	// init GLEW
-	//glewInit();
+	glewInit();
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
