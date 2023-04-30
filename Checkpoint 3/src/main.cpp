@@ -35,6 +35,7 @@ float offsetZ = 0.0f;
 float offsetX = 0.0f;
 
 float dx = 0, dy = 0, dz = 0;
+float Yi[3] = { 0.0f,1.0f,0.0f };
 
 
 void prepareData(Group& g)
@@ -226,32 +227,37 @@ void drawShape(Model& model){
 
 
 void translateObject(Transform& transform) {
-	float t = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-	float gt = fmod(t, transform.time) / transform.time; 
+	if (transform.time != 0) {
+		float t = glutGet(GLUT_ELAPSED_TIME) / 10000.0f;
+		t = fmod(t, transform.time);
 
-	float pos[3], deriv[3];
-	getGlobalCatmullRomPoint(gt, pos, deriv, transform); 
+		renderCatmullRomCurve(transform);
 
-	glPushMatrix();
-	glTranslatef(pos[0], pos[1], pos[2]);
+		float rotationMatrix[16];
+		float pos[3], deriv[3];
+		getGlobalCatmullRomPoint(t, pos, deriv, transform);
+		glTranslatef(pos[0], pos[1], pos[2]);
 
-	float Xi[3] = { deriv[0], deriv[1], deriv[2] };
-	float Zi[3], Yi[3] = { 0, 1, 0 };
+		float Xi[3] = { deriv[0], deriv[1], deriv[2] };
+		float Zi[3];
 
-	normalize(Xi);
-	cross(Xi, Yi, Zi);
+		if (transform.align == true) {
 
-	normalize(Zi);
-	cross(Zi, Xi, Yi);
+			normalize(Xi);
+			cross(Xi, Yi, Zi);
 
-	normalize(Yi);
-	GLfloat rotationMatrix[16];
-	buildRotMatrix(Xi, Yi, Zi, rotationMatrix);
-	glMultMatrixf(rotationMatrix);
+			normalize(Zi);
+			cross(Zi, Xi, Yi);
 
-	glGetFloatv(GL_MODELVIEW_MATRIX, transform.transformMatrix);
+			normalize(Yi);
+			buildRotMatrix(Xi, Yi, Zi, rotationMatrix);
 
-	glPopMatrix();
+			glMultMatrixf(rotationMatrix);
+		}
+	}
+
+	else
+		glTranslatef(transform.x, transform.y, transform.z);
 }
 
 
@@ -271,7 +277,6 @@ void rotateObject(Transform& transform) {
 void transformation(Transform& transform) {
 	if (transform.type=="translate"){
 		translateObject(transform);
-		//glTranslatef(transform.x, transform.y, transform.z);
 	}
 	else if (transform.type == "rotate") {
 		rotateObject(transform);
@@ -338,22 +343,6 @@ void renderScene() {
 	glColor3f(1.0f, 1.0f, 1.0f);
 
 	processgroup(estrutura.group);
-
-	// Render each object
-	for (int i = 0; i < estrutura.group.models.size(); i++) {
-		renderCatmullRomCurve(estrutura.group.transforms[i]);
-		
-		Transform transform = estrutura.group.transforms[i];
-
-		// Update object's transformation matrix
-		translateObject(transform);
-
-		// Apply transformation matrix and render object
-		glPushMatrix();
-		glMultMatrixf(transform.transformMatrix);
-		glutSolidTeapot(0.1);
-		glPopMatrix();
-	}
 
 	// End of frame
 	glutSwapBuffers();
@@ -466,7 +455,8 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 				xml_attribute<>* timeAttr = childNode->first_attribute("time");
 				if (timeAttr != NULL) {
 					translate.time = stof(timeAttr->value());
-					translate.align = (strcmp(childNode->first_attribute("align")->value(), "True") == 0);
+					const char* alignValue = childNode->first_attribute("align")->value();
+					translate.align = strcmp(alignValue, "true") == 0;
 					xml_node<>* pointNode = childNode->first_node("point");
 
 					while (pointNode != NULL) {
@@ -668,6 +658,7 @@ int main(int argc, char** argv) {
 
 	// Required callback registry 
 	glutDisplayFunc(renderScene);
+	glutIdleFunc(renderScene);
 	glutReshapeFunc(changeSize);
 
 	// Callback registration for keyboard processing
