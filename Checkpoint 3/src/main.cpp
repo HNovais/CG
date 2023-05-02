@@ -593,7 +593,7 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/test_3_1.xml");
+	file<> xmlFile("../xml/configuration.xml");
 
 	// Parse the XML file
 	xml_document<> doc;
