@@ -201,7 +201,7 @@ void drawShape(Model& model){
 	if (model.colour.size() > 0)
 		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
 
-	prepareData(estrutura.group);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
@@ -654,6 +654,8 @@ int main(int argc, char** argv) {
 
 	// init GLEW
 	glewInit();
+
+	prepareData(estrutura.group);
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
