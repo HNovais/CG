@@ -192,7 +192,6 @@ void changeSize(int w, int h) {
 
 
 void drawShape(Model& model){
-	
 	string file_name = model.name;
 	if (estrutura.shortcut.line == true)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -206,32 +205,16 @@ void drawShape(Model& model){
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
-	
-	/*
-	vector<float> coords = model.points;
-	if (estrutura.shortcut.line == true) { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
-	else { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
-
-	if (model.colour.size() > 0)
-		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
-
-	glBegin(GL_TRIANGLES);
-	for (int j = 0; j < coords.size(); j += 9) {
-		glVertex3f(coords[j], coords[j + 1], coords[j + 2]);
-		glVertex3f(coords[j + 3], coords[j + 4], coords[j + 5]);
-		glVertex3f(coords[j + 6], coords[j + 7], coords[j + 8]);
-	}
-	glEnd();
-	*/
 }
 
 
 void translateObject(Transform& transform) {
 	if (transform.time != 0) {
-		float t = glutGet(GLUT_ELAPSED_TIME) / 10000.0f;
+		float t = glutGet(GLUT_ELAPSED_TIME) / (transform.time * 1000.0f);
 		t = fmod(t, transform.time);
 
-		renderCatmullRomCurve(transform);
+		if (estrutura.shortcut.catmull)
+			renderCatmullRomCurve(transform);
 
 		float rotationMatrix[16];
 		float pos[3], deriv[3];
@@ -306,49 +289,6 @@ void processgroup(Group& group) {
 }
 
 
-void renderScene() {
-	// clear buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// set the camera
-	glLoadIdentity();
-
-	float camX = cos(beta) * sin(alpha);
-	float camZ = cos(beta) * cos(alpha);
-
-	gluLookAt(estrutura.camera.position.x, estrutura.camera.position.y, estrutura.camera.position.z,
-		estrutura.camera.lookAt.x, estrutura.camera.lookAt.y, estrutura.camera.lookAt.z,
-		estrutura.camera.up.x, estrutura.camera.up.y, estrutura.camera.up.z);
-
-	if (estrutura.shortcut.axis != true) {
-		glBegin(GL_LINES);
-		// X axis in red
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(
-			-100.0f, 0.0f, 0.0f);
-		glVertex3f(100.0f, 0.0f, 0.0f);
-		// Y Axis in Green
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(0.0f,
-			-100.0f, 0.0f);
-		glVertex3f(0.0f, 100.0f, 0.0f);
-		// Z Axis in Blue
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f,
-			-100.0f);
-		glVertex3f(0.0f, 0.0f, 100.0f);
-		glEnd();
-	}
-
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	processgroup(estrutura.group);
-
-	// End of frame
-	glutSwapBuffers();
-}
-
-
 void processKeys(unsigned char key, int xx, int yy) {
 	dx = estrutura.camera.lookAt.x - estrutura.camera.position.x;
 	dy = 0;
@@ -395,6 +335,10 @@ void processKeys(unsigned char key, int xx, int yy) {
 		if (estrutura.shortcut.axis == true)estrutura.shortcut.axis = false;
 		else estrutura.shortcut.axis = true;
 		break;
+	case 'j':
+		if (estrutura.shortcut.catmull == true)estrutura.shortcut.catmull = false;
+		else estrutura.shortcut.catmull = true;
+		break;
 	}
 
 	estrutura.camera.lookAt.x = estrutura.camera.position.x + sin(alpha);
@@ -402,6 +346,49 @@ void processKeys(unsigned char key, int xx, int yy) {
 	estrutura.camera.lookAt.y = estrutura.camera.position.y;
 
 	glutPostRedisplay();
+}
+
+
+void renderScene() {
+	// clear buffers
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// set the camera
+	glLoadIdentity();
+
+	float camX = cos(beta) * sin(alpha);
+	float camZ = cos(beta) * cos(alpha);
+
+	gluLookAt(estrutura.camera.position.x, estrutura.camera.position.y, estrutura.camera.position.z,
+		estrutura.camera.lookAt.x, estrutura.camera.lookAt.y, estrutura.camera.lookAt.z,
+		estrutura.camera.up.x, estrutura.camera.up.y, estrutura.camera.up.z);
+
+	if (estrutura.shortcut.axis != true) {
+		glBegin(GL_LINES);
+		// X axis in red
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glVertex3f(
+			-100.0f, 0.0f, 0.0f);
+		glVertex3f(100.0f, 0.0f, 0.0f);
+		// Y Axis in Green
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(0.0f,
+			-100.0f, 0.0f);
+		glVertex3f(0.0f, 100.0f, 0.0f);
+		// Z Axis in Blue
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(0.0f, 0.0f,
+			-100.0f);
+		glVertex3f(0.0f, 0.0f, 100.0f);
+		glEnd();
+	}
+
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+	processgroup(estrutura.group);
+
+	// End of frame
+	glutSwapBuffers();
 }
 
 

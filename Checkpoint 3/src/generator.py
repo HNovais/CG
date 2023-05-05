@@ -472,8 +472,8 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
             if (i+1) % 3 == 0:
                 f.write('\n')
 
-def generateBezier(tess, outputFile):
-    with open('out/teapot.patch', 'r') as f:
+def generateBezier(inputFile, tess, outputFile):
+    with open(inputFile, 'r') as f:
         numPatches = int(f.readline())
         patches = []
         for i in range(numPatches):
@@ -489,8 +489,6 @@ def generateBezier(tess, outputFile):
     tessellation = int(tess)
 
     triangles = []
-
-    import numpy as np
 
     def calculatePoint(u, v,arr):
         m = np.array([[-1, 3, -3, 1],
@@ -569,7 +567,7 @@ shapes = {
     },
     'bezier':{
         'func': generateBezier,
-        'args': ['tess', 'outputFile']
+        'args': ['inputFile', 'tess', 'outputFile']
     }
 }
 
@@ -582,13 +580,9 @@ if shapeName not in shapes:
     print(f'Invalid shape name: {shapeName}')
     sys.exit(1)
 
-args = sys.argv[2:-1]
-
 outputFile = sys.argv[-1]
 
 shapeFunc = shapes[shapeName]['func']
-shapeArgs = [float(arg) for arg in args] + [outputFile]
-shapeFunc(*shapeArgs)
 
 print(f'Successfully generated {shapeName} in file {outputFile}')
 

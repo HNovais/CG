@@ -12,7 +12,7 @@
 		</transform>
 		<group>
 			<transform>
-				<translate time = "10" align="true"> <!-- O campo align diz se o objecto deve ser orientado na curva -->
+				<translate time = "10" align="true"> 
 					<point x = "0" y = "0" z = "4" />
 					<point x = "4" y = "0" z = "0" />
 					<point x = "0" y = "0" z = "-4" />
@@ -22,7 +22,7 @@
 				<scale x="0.5" y="0.5" z="0.5" />
 			</transform>
 			<models> 
-				<model file="bezier_10.3d" /> <!-- generator patch teapot.patch 10 bezier_10.3d -->
+				<model file="bezier_10.3d" />
 			</models>
 		</group>
  	</group>

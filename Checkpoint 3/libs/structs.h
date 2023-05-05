@@ -40,7 +40,6 @@ struct Transform {
     float time;
     bool align;
     vector<float> movement;
-    float transformMatrix[16];
 };
 
 struct Model {
@@ -56,8 +55,9 @@ struct Group {
 };
 
 struct Shortcut{
-    bool line;
-    bool axis;
+    bool line = true;
+    bool axis = true;
+    bool catmull = true;
 };
 
 struct XML_Struct {
