@@ -347,8 +347,6 @@ def generatePlane(size, divisions, outputFile):
                 
             f.write('\n')
 
-
-
 def generateCylinder(radius, height, side, stack, outputFile):
    
     triangles = []

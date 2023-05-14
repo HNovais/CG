@@ -70,20 +70,25 @@ void initLighting() {
 
 
 void loadTexture(string textureName, unsigned int& textureID) {
-
 	unsigned int t, tw, th;
 	unsigned char* texData;
+
 	ilGenImages(1, &t);
 	ilBindImage(t);
-	ilLoadImage((ILstring)textureName.c_str());
+
+	if (!ilLoadImage((ILstring)textureName.c_str())) {
+		cerr << "Error loading texture " << textureName << endl;
+		exit(1);
+	}
+
+	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	tw = ilGetInteger(IL_IMAGE_WIDTH);
 	th = ilGetInteger(IL_IMAGE_HEIGHT);
-	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	texData = ilGetData();
 
 	glGenTextures(1, &textureID);
-
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
@@ -93,6 +98,8 @@ void loadTexture(string textureName, unsigned int& textureID) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+
+	ilDeleteImages(1, &t);
 }
 
 
@@ -109,7 +116,7 @@ void init() {
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	initLighting();
+	//initLighting();
 }
 
 
