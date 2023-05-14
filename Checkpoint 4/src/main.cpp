@@ -6,6 +6,7 @@
 #include <io.h>
 #include <direct.h>
 #include <structs.h>
+#include <IL/il.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -60,6 +61,55 @@ void prepareData(Group& g)
 	for (Group& group : g.groups) {
 		prepareData(group);
 	}
+}
+
+
+void initLighting() {
+	
+}
+
+
+void loadTexture(string textureName, unsigned int& textureID) {
+
+	unsigned int t, tw, th;
+	unsigned char* texData;
+	ilGenImages(1, &t);
+	ilBindImage(t);
+	ilLoadImage((ILstring)textureName.c_str());
+	tw = ilGetInteger(IL_IMAGE_WIDTH);
+	th = ilGetInteger(IL_IMAGE_HEIGHT);
+	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+	texData = ilGetData();
+
+	glGenTextures(1, &textureID);
+
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+
+void init() {
+	ilInit();
+
+	for (Model model : estrutura.group.models) {
+		loadTexture(model.texture, model.textureID);
+	}
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	initLighting();
 }
 
 
@@ -191,7 +241,7 @@ void changeSize(int w, int h) {
 }
 
 
-void drawShape(Model& model){
+void drawShape(Model& model) {
 	string file_name = model.name;
 	if (estrutura.shortcut.line == true)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -201,7 +251,8 @@ void drawShape(Model& model){
 	if (model.colour.size() > 0)
 		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
 
-	
+	glBindTexture(GL_TEXTURE_2D, model.textureID); 
+
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
@@ -537,15 +588,47 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 			model.name = file;
 
 			float x, y, z;
+			float u, v;
 			string file_path = "../out/" + file;
 			cout << "Loading model from file: " << file_path << "\n" << std::endl;
 
 			ifstream infile(file_path);
 
-			while (infile >> x >> y >> z) {
-				model.points.push_back(x);
-				model.points.push_back(y);
-				model.points.push_back(z);
+			int lines = 0;
+			
+			while (infile.good()) {
+				for (int i = 0; i < 3; i++) {
+					infile >> x >> y >> z;
+					model.points.push_back(x);
+					model.points.push_back(y);
+					model.points.push_back(z);
+				}
+
+				for (int i = 0; i < 3; i++) {
+					infile >> x >> y >> z;
+					model.normals.push_back(x);
+					model.normals.push_back(y);
+					model.normals.push_back(z);
+				}
+
+				for (int i = 0; i < 3; i++) {
+					infile >> u >> v;
+					model.texcoords.push_back(u);
+					model.texcoords.push_back(v);
+				}
+			}
+
+			for (int j = 0; j < 3; j++) {
+				model.points.pop_back();
+				model.points.pop_back();
+				model.points.pop_back();
+
+				model.normals.pop_back();
+				model.normals.pop_back();
+				model.normals.pop_back();
+
+				model.texcoords.pop_back();
+				model.texcoords.pop_back();
 			}
 
 			if (colourNode != NULL) {
@@ -562,8 +645,10 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 
 			if (textureNode != NULL) {
 				string texture = textureNode->first_attribute("file")->value();
+				string texture_path = "../textures/" + texture;
+				model.texture = texture_path;	
 
-				// read texture file
+				cout << "Loading texture: " << texture_path << "\n" << std::endl;
 			}
 
 			xml_node<>* colorNode = modelNode->first_node("color");
@@ -587,6 +672,39 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 
 					model.color.push_back(colors);
 				}
+			}
+
+			else {
+				Color diffuse, ambient, specular, emissive, shininess;
+
+				diffuse.type = "diffuse";
+				diffuse.values.x = 200;
+				diffuse.values.y = 200;
+				diffuse.values.z = 200;
+
+				ambient.type = "ambient";
+				ambient.values.x = 50;
+				ambient.values.y = 50;
+				ambient.values.z = 50;
+
+				specular.type = "specular";
+				specular.values.x = 0;
+				specular.values.y = 0;
+				specular.values.z = 0;
+				
+				emissive.type = "emissive";
+				emissive.values.x = 0;
+				emissive.values.y = 0;
+				emissive.values.z = 0;
+
+				shininess.type = "shininess";
+				shininess.value = 0;
+
+				model.color.push_back(diffuse);
+				model.color.push_back(ambient);
+				model.color.push_back(specular);
+				model.color.push_back(emissive);
+				model.color.push_back(shininess);
 			}
 
 			group.models.push_back(model);
@@ -650,7 +768,7 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/configuration.xml");
+	file<> xmlFile("../xml/test.xml");
 
 	// Parse the XML file
 	xml_document<> doc;
@@ -729,6 +847,7 @@ int main(int argc, char** argv) {
 	glewInit();
 
 	prepareData(estrutura.group);
+	init();
 
 	//  OpenGL settings
 	glEnable(GL_DEPTH_TEST);

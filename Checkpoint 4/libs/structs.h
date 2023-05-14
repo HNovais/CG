@@ -49,11 +49,16 @@ struct Color {
 };
 
 struct Model {
-    vector<float> colour;
-    vector<float> points;
     string name;
+    string texture;
+    unsigned int textureID;
+    vector<float> colour;
+    
+    vector<float> points;
+    vector<float> normals;
+    vector<float> texcoords;
 
-    vector<Color> color
+    vector<Color> color;
 };
 
 struct Group {

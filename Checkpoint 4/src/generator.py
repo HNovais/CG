@@ -274,6 +274,8 @@ def generateCone(radius, height, slice, stack, outputFile):
 
 def generatePlane(size, divisions, outputFile):
     step = size / divisions
+    ss = step / size
+
     triangles = []
     normals = []
     texcoords = []
@@ -299,46 +301,53 @@ def generatePlane(size, divisions, outputFile):
             triangles.append([x4, y4, z4])
             triangles.append([x2, y2, z2])
             triangles.append([x1, y1, z1])
-
-            texcoords.append([(i+1)*step/size, (j+1)*step/size])
-            texcoords.append([(i+1)*step/size, j*step/size])
-            texcoords.append([i*step/size, j*step/size])
-            
+                
             triangles.append([x3, y3, z3])
             triangles.append([x4, y4, z4])
             triangles.append([x1, y1, z1])
 
-            texcoords.append([i*step/size, (j+1)*step/size])
-            texcoords.append([(i+1)*step/size, (j+1)*step/size])
-            texcoords.append([i*step/size, j*step/size])
-
-            for i in range(6):
-                normals.append([0,1,0])
-
             triangles.append([x3, y3, z3])
             triangles.append([x1, y1, z1])
-            triangles.append([x2, y2, z2])       
-
-            texcoords.append([i*step/size, (j+1)*step/size])
-            texcoords.append([i*step/size, j*step/size])
-            texcoords.append([(i+1)*step/size, j*step/size])     
+            triangles.append([x2, y2, z2])            
               
             triangles.append([x3, y3, z3])
             triangles.append([x2, y2, z2])
-            triangles.append([x4, y4, z4])          
+            triangles.append([x4, y4, z4])    
 
-            texcoords.append([i*step/size, (j+1)*step/size])
-            texcoords.append([(i+1)*step/size, j*step/size])  
-            texcoords.append([(i+1)*step/size, (j+1)*step/size])
-               
-            for i in range(6):
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, j*ss])
+            
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, j*ss])     
+              
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])  
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+
+            for m in range(6):
+                normals.append([0,1,0])
+            
+            for m in range(6):
                 normals.append([0,-1,0])
 
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + ' ' + ' '.join(str(x) for x in normals[i]) + ' ' + ' '.join(str(x) for x in texcoords[i]) + '\n')
-            if (i+1) % 9 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+                
+            f.write('\n')
+
+
 
 def generateCylinder(radius, height, side, stack, outputFile):
    
@@ -603,9 +612,19 @@ if shapeName not in shapes:
     print(f'Invalid shape name: {shapeName}')
     sys.exit(1)
 
+args = sys.argv[2:-1]
 outputFile = sys.argv[-1]
 
+shapeArgs = []
+for arg in args:
+    try:
+        shapeArgs.append(float(arg))
+    except ValueError:
+        shapeArgs.append(arg)
+
+shapeArgs.append(outputFile)
+
 shapeFunc = shapes[shapeName]['func']
+shapeFunc(*shapeArgs)
 
 print(f'Successfully generated {shapeName} in file {outputFile}')
-
