@@ -61,6 +61,8 @@ def generateSphere(radius, slice, stack, outputFile):
 def generateBox(size, divisions, outputFile):
     step = size / divisions
     triangles = []
+    normals = []
+    texcoords = []
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -97,6 +99,11 @@ def generateBox(size, divisions, outputFile):
             triangles.append([x2, -y2, z2])
             triangles.append([x4, -y4, z4])
               
+            for _ in range(6):
+                normals.append([0,1,0])
+            
+            for _ in range(6):
+                normals.append([0,-1,0])
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -133,6 +140,11 @@ def generateBox(size, divisions, outputFile):
             triangles.append([x2, y2, z2])
             triangles.append([x4, y4, z4]) 
 
+            for _ in range(6):
+                normals.append([0,0,-1])
+
+            for _ in range(6):
+                normals.append([0,0,1])
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -169,11 +181,22 @@ def generateBox(size, divisions, outputFile):
             triangles.append([x2, y2, -z2])
             triangles.append([x4, y4, -z4])
     
+            for _ in range(6):
+                normals.append([-1,0,0])
+
+            for _ in range(6):
+                normals.append([1,0,0])
+
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+                
+            f.write('\n')
 
 def generateCone(radius, height, slice, stack, outputFile):
     triangles = []

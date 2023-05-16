@@ -75,7 +75,7 @@ struct Lights {
 };
 
 struct Shortcut{
-    bool line = true;
+    bool line = false;
     bool axis = true;
     bool catmull = true;
 };

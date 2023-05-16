@@ -29,6 +29,10 @@ using namespace std;
 XML_Struct estrutura;
 unordered_map<string, GLuint> vertices;
 unordered_map<string, GLuint> verticeCount;
+unordered_map<string, GLuint> normals;
+unordered_map<string, GLuint> normalCount;
+unordered_map<string, GLuint> textures;
+unordered_map<string, GLuint> texCount;
 
 float alpha = 0.0f;
 float beta = 0.0f;
@@ -57,6 +61,30 @@ void prepareData(Group& g)
 				model.points.data(),
 				GL_STATIC_DRAW);
 		}
+
+		if (normals.find(file_name) == normals.end()) {
+			normalCount[file_name] = model.normals.size() / 3;
+
+			glGenBuffers(1, &normals[file_name]);
+			glBindBuffer(GL_ARRAY_BUFFER, normals[file_name]);
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				sizeof(float) * model.normals.size(),
+				model.normals.data(),
+				GL_STATIC_DRAW);
+		}
+
+		if (textures.find(file_name) == textures.end()) {
+			texCount[file_name] = model.texcoords.size() / 3;
+
+			glGenBuffers(1, &textures[file_name]);
+			glBindBuffer(GL_ARRAY_BUFFER, textures[file_name]);
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				sizeof(float) * model.texcoords.size(),
+				model.texcoords.data(),
+				GL_STATIC_DRAW);
+		}
 	}
 	for (Group& group : g.groups) {
 		prepareData(group);
@@ -65,7 +93,44 @@ void prepareData(Group& g)
 
 
 void initLighting() {
-	
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	float dark[4] = { 0.2, 0.2, 0.2, 1.0 };
+	float white[4] = { 1.0, 1.0, 1.0, 1.0 };
+	float black[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+	// light colors
+	glLightfv(GL_LIGHT0, GL_AMBIENT, dark);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+
+	// controls global ambient light
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, black);
+	/*
+	int index = 0;
+
+	for (const Lights& light : estrutura.lights) {
+		glEnable(GL_LIGHT0 + index);
+
+		if (light.type == "point") {
+			float pos[4] = { light.pos.x, light.pos.y, light.pos.z, 1.0f };
+			glLightfv(GL_LIGHT0 + index, GL_POSITION, pos);
+		}
+		if (light.type == "directional") {
+			float dir[4] = { light.dir.x, light.dir.y, light.dir.z, 1.0f };
+			glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir);
+		}
+		if (light.type == "spotlight") {
+			float pos[4] = { light.pos.x, light.pos.y, light.pos.z, 1.0f };
+			float dir[4] = { light.dir.x, light.dir.y, light.dir.z, 1.0f };
+			glLightfv(GL_LIGHT0 + index, GL_POSITION, pos);
+			glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir);
+			glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, light.cutoff);
+		}
+
+		index++;
+	}*/
 }
 
 
@@ -81,25 +146,35 @@ void loadTexture(string textureName, unsigned int& textureID) {
 		exit(1);
 	}
 
-	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	tw = ilGetInteger(IL_IMAGE_WIDTH);
 	th = ilGetInteger(IL_IMAGE_HEIGHT);
+	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);	
 	texData = ilGetData();
-
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+}
 
-	ilDeleteImages(1, &t);
+
+void loadColor(const Model& model) {
+	glColor3ub(model.color[0].values.x, model.color[0].values.y, model.color[0].values.z);
+
+	float ambient[4] = { model.color[1].values.x / 255, model.color[1].values.y / 255, model.color[1].values.z / 255, 1.0f };
+	float specular[4] = { model.color[2].values.x / 255, model.color[2].values.y / 255, model.color[2].values.z / 255, 1.0f };
+	float emission[4] = { model.color[3].values.x / 255, model.color[3].values.y / 255, model.color[3].values.z / 255, 1.0f };
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emission);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, model.color[4].value);
 }
 
 
@@ -107,7 +182,8 @@ void init() {
 	ilInit();
 
 	for (Model model : estrutura.group.models) {
-		loadTexture(model.texture, model.textureID);
+		if (!model.texture.empty())
+			loadTexture(model.texture, model.textureID);
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -116,7 +192,7 @@ void init() {
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//initLighting();
+	initLighting();
 }
 
 
@@ -258,11 +334,19 @@ void drawShape(Model& model) {
 	if (model.colour.size() > 0)
 		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
 
+	loadColor(model);
+
 	glBindTexture(GL_TEXTURE_2D, model.textureID); 
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, normals[file_name]);
+	glNormalPointer(GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, textures[file_name]);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+
 	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -440,6 +524,9 @@ void renderScene() {
 		glVertex3f(0.0f, 0.0f, 100.0f);
 		glEnd();
 	}
+
+	float pos[4] = { 1.0, 1.0, 1.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 
@@ -819,7 +906,7 @@ void loadXML() {
 	xml_node<>* lightsNode = rootNode->first_node("lights");
 
 	if (lightsNode != NULL)
-		estrutura.lights = readLights(rootNode);
+		estrutura.lights = readLights(lightsNode);
 
 	xml_node<>* groupNode = rootNode->first_node("group");
 
