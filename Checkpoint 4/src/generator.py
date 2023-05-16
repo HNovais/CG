@@ -60,6 +60,8 @@ def generateSphere(radius, slice, stack, outputFile):
 
 def generateBox(size, divisions, outputFile):
     step = size / divisions
+    ss = 1.0 / divisions
+
     triangles = []
     normals = []
     texcoords = []
@@ -105,6 +107,22 @@ def generateBox(size, divisions, outputFile):
             for _ in range(6):
                 normals.append([0,-1,0])
 
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+
     for i in range(int(divisions)):
         for j in range(int(divisions)):
             
@@ -146,6 +164,22 @@ def generateBox(size, divisions, outputFile):
             for _ in range(6):
                 normals.append([0,0,1])
 
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+
     for i in range(int(divisions)):
         for j in range(int(divisions)):
             
@@ -186,6 +220,22 @@ def generateBox(size, divisions, outputFile):
 
             for _ in range(6):
                 normals.append([1,0,0])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+
+            texcoords.append([i*ss, (j+1)*ss])
+            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([(i+1)*ss, (j+1)*ss])
 
     with open(outputFile, 'w') as f:
         for i in range(0, len(triangles), 3):
@@ -297,7 +347,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
 def generatePlane(size, divisions, outputFile):
     step = size / divisions
-    ss = step / size
+    ss = 1.0 / divisions
 
     triangles = []
     normals = []
@@ -324,38 +374,38 @@ def generatePlane(size, divisions, outputFile):
             triangles.append([x4, y4, z4])
             triangles.append([x2, y2, z2])
             triangles.append([x1, y1, z1])
-                
+
             triangles.append([x3, y3, z3])
             triangles.append([x4, y4, z4])
             triangles.append([x1, y1, z1])
 
             triangles.append([x3, y3, z3])
             triangles.append([x1, y1, z1])
-            triangles.append([x2, y2, z2])            
-              
+            triangles.append([x2, y2, z2])
+
             triangles.append([x3, y3, z3])
             triangles.append([x2, y2, z2])
-            triangles.append([x4, y4, z4])    
+            triangles.append([x4, y4, z4])
 
             texcoords.append([(i+1)*ss, (j+1)*ss])
             texcoords.append([(i+1)*ss, j*ss])
             texcoords.append([i*ss, j*ss])
-            
+
             texcoords.append([i*ss, (j+1)*ss])
             texcoords.append([(i+1)*ss, (j+1)*ss])
             texcoords.append([i*ss, j*ss])
 
             texcoords.append([i*ss, (j+1)*ss])
             texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])     
-              
+            texcoords.append([(i+1)*ss, j*ss])
+
             texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])  
+            texcoords.append([(i+1)*ss, j*ss])
             texcoords.append([(i+1)*ss, (j+1)*ss])
 
             for m in range(6):
                 normals.append([0,1,0])
-            
+
             for m in range(6):
                 normals.append([0,-1,0])
 
@@ -367,8 +417,9 @@ def generatePlane(size, divisions, outputFile):
                 f.write(' '.join(str(x) for x in normals[j]) + '\n')
             for j in range(i, i+3):
                 f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
-                
+
             f.write('\n')
+
 
 def generateCylinder(radius, height, side, stack, outputFile):
    

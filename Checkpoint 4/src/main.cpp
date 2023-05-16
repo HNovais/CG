@@ -42,7 +42,6 @@ float offsetX = 0.0f;
 float dx = 0, dy = 0, dz = 0;
 float Yi[3] = { 0.0f,1.0f,0.0f };
 
-
 void prepareData(Group& g)
 {
 	string file_name;
@@ -94,62 +93,54 @@ void prepareData(Group& g)
 
 void initLighting() {
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
 
-	float dark[4] = { 0.2, 0.2, 0.2, 1.0 };
-	float white[4] = { 1.0, 1.0, 1.0, 1.0 };
-	float black[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	int numLights = estrutura.lights.size();
+	for (int i = 0; i < numLights; i++) {
+		glEnable(GL_LIGHT0 + i);
+	}
 
-	// light colors
-	glLightfv(GL_LIGHT0, GL_AMBIENT, dark);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, white);
+	for (int i = 0; i < numLights; i++) {
+		if (estrutura.lights[i].type == "point") {
+			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 };
+			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
 
-	// controls global ambient light
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, black);
-	/*
-	int index = 0;
-
-	for (const Lights& light : estrutura.lights) {
-		glEnable(GL_LIGHT0 + index);
-
-		if (light.type == "point") {
-			float pos[4] = { light.pos.x, light.pos.y, light.pos.z, 1.0f };
-			glLightfv(GL_LIGHT0 + index, GL_POSITION, pos);
+			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
 		}
-		if (light.type == "directional") {
-			float dir[4] = { light.dir.x, light.dir.y, light.dir.z, 1.0f };
-			glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir);
-		}
-		if (light.type == "spotlight") {
-			float pos[4] = { light.pos.x, light.pos.y, light.pos.z, 1.0f };
-			float dir[4] = { light.dir.x, light.dir.y, light.dir.z, 1.0f };
-			glLightfv(GL_LIGHT0 + index, GL_POSITION, pos);
-			glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, dir);
-			glLightf(GL_LIGHT0 + index, GL_SPOT_CUTOFF, light.cutoff);
-		}
+		if (estrutura.lights[i].type == "directional") {
+			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 };
+			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 1.0 };
 
-		index++;
-	}*/
+			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
+		}
+		if (estrutura.lights[i].type == "spot") {
+			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 }; 
+			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
+			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 0.0 };
+
+			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
+			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
+			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
+
+			glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, estrutura.lights[i].cutoff);
+		}
+	}
 }
 
 
 void loadTexture(string textureName, unsigned int& textureID) {
 	unsigned int t, tw, th;
 	unsigned char* texData;
-
 	ilGenImages(1, &t);
 	ilBindImage(t);
-
-	if (!ilLoadImage((ILstring)textureName.c_str())) {
-		cerr << "Error loading texture " << textureName << endl;
-		exit(1);
-	}
-
+	ilLoadImage((ILstring)textureName.c_str());
 	tw = ilGetInteger(IL_IMAGE_WIDTH);
 	th = ilGetInteger(IL_IMAGE_HEIGHT);
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);	
 	texData = ilGetData();
+	                            
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -165,12 +156,12 @@ void loadTexture(string textureName, unsigned int& textureID) {
 
 
 void loadColor(const Model& model) {
-	glColor3ub(model.color[0].values.x, model.color[0].values.y, model.color[0].values.z);
-
+	float diffuse[4] = { model.color[0].values.x, model.color[0].values.y, model.color[0].values.z, 1.0f };
 	float ambient[4] = { model.color[1].values.x / 255, model.color[1].values.y / 255, model.color[1].values.z / 255, 1.0f };
 	float specular[4] = { model.color[2].values.x / 255, model.color[2].values.y / 255, model.color[2].values.z / 255, 1.0f };
 	float emission[4] = { model.color[3].values.x / 255, model.color[3].values.y / 255, model.color[3].values.z / 255, 1.0f };
 
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emission);
@@ -181,7 +172,7 @@ void loadColor(const Model& model) {
 void init() {
 	ilInit();
 
-	for (Model model : estrutura.group.models) {
+	for (Model& model : estrutura.group.models) {
 		if (!model.texture.empty())
 			loadTexture(model.texture, model.textureID);
 	}
@@ -191,8 +182,6 @@ void init() {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	initLighting();
 }
 
 
@@ -326,6 +315,7 @@ void changeSize(int w, int h) {
 
 void drawShape(Model& model) {
 	string file_name = model.name;
+
 	if (estrutura.shortcut.line == true)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
@@ -336,7 +326,7 @@ void drawShape(Model& model) {
 
 	loadColor(model);
 
-	glBindTexture(GL_TEXTURE_2D, model.textureID); 
+	glBindTexture(GL_TEXTURE_2D, model.textureID);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertices[file_name]);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
@@ -346,8 +336,10 @@ void drawShape(Model& model) {
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
 	glDrawArrays(GL_TRIANGLES, 0, verticeCount[file_name]);
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
 
 
 void translateObject(Transform& transform) {
@@ -525,10 +517,7 @@ void renderScene() {
 		glEnd();
 	}
 
-	float pos[4] = { 1.0, 1.0, 1.0, 0.0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-
-	glColor3f(1.0f, 1.0f, 1.0f);
+	initLighting();
 
 	processgroup(estrutura.group);
 
@@ -829,25 +818,25 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 		newLight.type = childNode->first_attribute("type")->value();
 
 		if (newLight.type == "point") {
-			newLight.pos.x = stof(childNode->first_attribute("posX")->value());
-			newLight.pos.y = stof(childNode->first_attribute("posY")->value());
-			newLight.pos.z = stof(childNode->first_attribute("posZ")->value());
+			newLight.pos.x = stof(childNode->first_attribute("posx")->value());
+			newLight.pos.y = stof(childNode->first_attribute("posy")->value());
+			newLight.pos.z = stof(childNode->first_attribute("posz")->value());
 		}
 
 		else if (newLight.type == "directional") {
-			newLight.dir.x = stof(childNode->first_attribute("dirX")->value());
-			newLight.dir.y = stof(childNode->first_attribute("dirY")->value());
-			newLight.dir.z = stof(childNode->first_attribute("dirZ")->value());
+			newLight.dir.x = stof(childNode->first_attribute("dirx")->value());
+			newLight.dir.y = stof(childNode->first_attribute("diry")->value());
+			newLight.dir.z = stof(childNode->first_attribute("dirz")->value());
 		}
 
 		else {
-			newLight.pos.x = stof(childNode->first_attribute("posX")->value());
-			newLight.pos.y = stof(childNode->first_attribute("posY")->value());
-			newLight.pos.z = stof(childNode->first_attribute("posZ")->value());
+			newLight.pos.x = stof(childNode->first_attribute("posx")->value());
+			newLight.pos.y = stof(childNode->first_attribute("posy")->value());
+			newLight.pos.z = stof(childNode->first_attribute("posz")->value());
 
-			newLight.dir.x = stof(childNode->first_attribute("dirX")->value());
-			newLight.dir.y = stof(childNode->first_attribute("dirY")->value());
-			newLight.dir.z = stof(childNode->first_attribute("dirZ")->value());
+			newLight.dir.x = stof(childNode->first_attribute("dirx")->value());
+			newLight.dir.y = stof(childNode->first_attribute("diry")->value());
+			newLight.dir.z = stof(childNode->first_attribute("dirz")->value());
 
 			newLight.cutoff = stof(childNode->first_attribute("cutoff")->value());
 		}

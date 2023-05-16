@@ -8,17 +8,13 @@
     </camera>
 	
     <lights>
-        <light type="point" posX="0" posY="10" posZ="0" />
-        <light type="directional" dirX="1" dirY="1" dirZ="1"/>
-        <light type="spotlight" posX="0" posY="10" posZ="0"
-                                dirX="1" dirY="1" dirZ="1"
-                                cutoff="45" />
+        <light type="point" posx="2" posy="2" posz="-2" />
     </lights>
 
 	<group> 
   		<models> 
-			<model file="plane.3d" > 
-                <texture file="sun.jpg" />
+			<model file="box_2_3.3d" > 
+                <texture file="box.jpg"/>
 				<color>
                     <diffuse R="200" G="200" B="000" />
                     <ambient R="50" G="50" B="00" />
