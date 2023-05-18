@@ -284,6 +284,8 @@ def generateBox(size, divisions, outputFile):
 
 def generateCone(radius, height, slice, stack, outputFile):
     triangles = []
+    normals = []
+    texcoords = []
 
     slices = int(slice)
     stacks = int(stack)
@@ -302,18 +304,24 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius, z))
+                texcoords.append((i / slices, 0))
 
                 a = x * ((stacks - j) / stacks)
                 b = height * j / stacks
                 c = z * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius, z))
+                texcoords.append(((i + 1) / slices, 0))
                 
                 a = 0
                 b = height * j / stacks
                 c = 0
 
                 triangles.append((a, b, c))
+                normals.append((0, -1, 0))
+                texcoords.append((0.5, 0.5))
 
             angle2 = math.pi / slices
 
@@ -323,36 +331,48 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = z * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius * math.cos(angle2), z))
+                texcoords.append((i / slices, (j + 1) / stacks))
                 
                 a = xx * ((stacks - j) / stacks)
                 b = height * j / stacks
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((xx, radius * math.cos(angle2), zz))
+                texcoords.append(((i + 1) / slices, (j + 1) / stacks))
                 
                 a = x * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
                 c = z * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius * math.cos(angle2), z))
+                texcoords.append((i / slices, j / stacks))
                 
                 a = xx * ((stacks - j) / stacks)
                 b = height * j / stacks
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((xx, radius * math.cos(angle2), zz))
+                texcoords.append(((i + 1) / slices, (j + 1) / stacks))
                 
                 a = xx * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
                 c = zz * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((xx, radius * math.cos(angle2), zz))
+                texcoords.append(((i + 1) / slices, j / stacks))
 
                 a = x * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
                 c = z * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius * math.cos(angle2), z))
+                texcoords.append((i / slices, j / stacks))
 
             else:
                 a = x * ((stacks - j) / stacks)
@@ -360,24 +380,35 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = z * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((x, radius, z))
+                texcoords.append((i / slices, 1))
 
                 a = xx * ((stacks - j) / stacks)
                 b = height * j / stacks
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
+                normals.append((xx, radius, zz))
+                texcoords.append(((i + 1) / slices, 1))
 
                 a = 0
                 b = height
                 c = 0
 
                 triangles.append((a, b, c))
+                normals.append((0, -1, 0))
+                texcoords.append((0.5, 0.5))
 
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+
+            f.write('\n')
 
 def generatePlane(size, divisions, outputFile):
     step = size / divisions
@@ -657,6 +688,8 @@ def generateBezier(inputFile, tess, outputFile):
     tessellation = int(tess)
 
     triangles = []
+    normals = []
+    texcoords = []
 
     def calculatePoint(u, v,arr):
         m = np.array([[-1, 3, -3, 1],
@@ -695,18 +728,48 @@ def generateBezier(inputFile, tess, outputFile):
                 B = calculatePoint(u, v+delta, arr)
                 C = calculatePoint(u+delta, v, arr)
                 D = calculatePoint(u+delta, v+delta, arr)
-                triangles.append((B[0], B[1], B[2]))
-                triangles.append((C[0], C[1], C[2]))
-                triangles.append((A[0], A[1], A[2]))
-                triangles.append((B[0], B[1], B[2]))
-                triangles.append((D[0], D[1], D[2]))
-                triangles.append((C[0], C[1], C[2]))
+
+                normal = np.cross(B - A, C - A) # normal entre os pontos A B C
+                magnitude = np.linalg.norm(normal) # Tamanho do vetor normal
+                if magnitude < 1e-6: # ver se é perto de zero pra não dar problemas com a divisão
+                    continue
+                
+                normal /= magnitude
+
+                triangles.append(B)
+                normals.append(normal)
+                texcoords.append((u, v + delta))
+
+                triangles.append(C)
+                normals.append(normal)
+                texcoords.append((u + delta, v))
+
+                triangles.append(A)
+                normals.append(normal)
+                texcoords.append((u, v))
+
+                triangles.append(B)
+                normals.append(normal)
+                texcoords.append((u, v + delta))
+
+                triangles.append(D)
+                normals.append(normal)
+                texcoords.append((u + delta, v + delta))
+
+                triangles.append(C)
+                normals.append(normal)
+                texcoords.append((u + delta, v))
                 
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+
+            f.write('\n')
 
 shapes = {
     'sphere': {
