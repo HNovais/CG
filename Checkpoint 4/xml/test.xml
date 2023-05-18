@@ -13,8 +13,8 @@
 
 	<group> 
   		<models> 
-			<model file="box_2_3.3d" > 
-                <texture file="box.jpg"/>
+			<model file="s.3d" > 
+                <texture file="sun.jpg"/>
 				<color>
                     <diffuse R="200" G="200" B="000" />
                     <ambient R="50" G="50" B="00" />

@@ -4,6 +4,8 @@ import numpy as np
 
 def generateSphere(radius, slice, stack, outputFile):
     triangles = []
+    normals = []
+    texcoords = []
 
     slices = int(slice)
     stacks = int(stack)
@@ -21,42 +23,62 @@ def generateSphere(radius, slice, stack, outputFile):
             z = radius * math.cos(alpha) * math.cos(beta)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
 
             x = radius * math.sin(alpha1) * math.cos(beta) 
             y = radius * math.sin(beta)
             z = radius * math.cos(alpha1) * math.cos(beta)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
 
             x = radius * math.sin(alpha) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha) * math.cos(beta1)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
 
             x = radius * math.sin(alpha1) * math.cos(beta) 
             y = radius * math.sin(beta)
             z = radius * math.cos(alpha1) * math.cos(beta)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
 
             x = radius * math.sin(alpha1) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha1) * math.cos(beta1)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
 
             x = radius * math.sin(alpha) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha) * math.cos(beta1)
 
             triangles.append((x,y,z))
+            normals.append((x/radius, y/radius, z/radius))
+
+            u = i / slices
+            v = (j + stacks / 2) / stacks
+            texcoords.append((u, v))
+            texcoords.append(((i + 1) / slices, v))
+            texcoords.append((u, (j + 1 + stacks / 2) / stacks))
+            texcoords.append(((i + 1) / slices, v))
+            texcoords.append(((i + 1) / slices, (j + 1 + stacks / 2) / stacks))
+            texcoords.append((u, (j + 1 + stacks / 2) / stacks))
 
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+
+            f.write('\n')
 
 def generateBox(size, divisions, outputFile):
     step = size / divisions
@@ -419,7 +441,6 @@ def generatePlane(size, divisions, outputFile):
                 f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
 
             f.write('\n')
-
 
 def generateCylinder(radius, height, side, stack, outputFile):
    
