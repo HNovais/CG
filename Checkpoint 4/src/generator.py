@@ -23,42 +23,54 @@ def generateSphere(radius, slice, stack, outputFile):
             z = radius * math.cos(alpha) * math.cos(beta)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             x = radius * math.sin(alpha1) * math.cos(beta) 
             y = radius * math.sin(beta)
             z = radius * math.cos(alpha1) * math.cos(beta)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+            
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             x = radius * math.sin(alpha) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha) * math.cos(beta1)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+            
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             x = radius * math.sin(alpha1) * math.cos(beta) 
             y = radius * math.sin(beta)
             z = radius * math.cos(alpha1) * math.cos(beta)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+            
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             x = radius * math.sin(alpha1) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha1) * math.cos(beta1)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+            
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             x = radius * math.sin(alpha) * math.cos(beta1) 
             y = radius * math.sin(beta1)
             z = radius * math.cos(alpha) * math.cos(beta1)
 
             triangles.append((x,y,z))
-            normals.append((x/radius, y/radius, z/radius))
+            
+            norm = math.sqrt(x*x + y*y + z*z)
+            normals.append((x/norm, y/norm, z/norm))
 
             u = i / slices
             v = (j + stacks / 2) / stacks
@@ -443,8 +455,10 @@ def generatePlane(size, divisions, outputFile):
             f.write('\n')
 
 def generateCylinder(radius, height, side, stack, outputFile):
-   
     triangles = []
+    normals = []
+    texcoords = []
+
     slides = int(side)
     stacks = int(stack)
 
@@ -458,18 +472,24 @@ def generateCylinder(radius, height, side, stack, outputFile):
         z = radius * math.cos(angle)
 
         triangles.append((x,y,z))
- 
+        normals.append((0,1,0))
+        texcoords.append((0.5 + 0.5 * math.cos(angle), 0.5 - 0.5 * math.sin(angle)))
+        
         x = radius * math.sin(value)
         y = height 
         z = radius * math.cos(value)
         
         triangles.append((x,y,z))       
+        normals.append((0,1,0))
+        texcoords.append((0.5 + 0.5 * math.cos(value), 0.5 - 0.5 * math.sin(value)))
 
         x = 0
         y = height 
         z = 0
 
         triangles.append((x,y,z))
+        normals.append((0,1,0))
+        texcoords.append((0.5, 0.5))
 
         for j in range(stacks):
             
@@ -479,18 +499,24 @@ def generateCylinder(radius, height, side, stack, outputFile):
             z = radius * math.cos(angle)
 
             triangles.append((x,y,z))
+            normals.append((x, 0, z))
+            texcoords.append((i / slides, j / stacks))
     
             x = radius * math.sin(value)
             y = height  * (j / stacks)
             z = radius * math.cos(value)
             
-            triangles.append((x,y,z))       
+            triangles.append((x,y,z))
+            normals.append((x, 0, z))
+            texcoords.append(((i+1) / slides, j / stacks))       
 
             x = radius * math.sin(angle)
             y = height  * ((j + 1) / stacks)
             z = radius * math.cos(angle)
 
             triangles.append((x,y,z))
+            normals.append((x, 0, z))
+            texcoords.append((i / slides, j / stacks))
 
 
             x = radius * math.sin(angle)
@@ -498,18 +524,24 @@ def generateCylinder(radius, height, side, stack, outputFile):
             z = radius * math.cos(angle)
 
             triangles.append((x,y,z))
+            normals.append((x, 0, z))
+            texcoords.append((i / slides, (j+1) / stacks))
     
             x = radius * math.sin(value)
             y = height * (j / stacks)
             z = radius * math.cos(value)
             
-            triangles.append((x,y,z))       
+            triangles.append((x,y,z))
+            normals.append((x, 0, z))    
+            texcoords.append(((i+1) / slides, j / stacks))       
 
             x = radius * math.sin(value)
             y = height * ((j + 1) / stacks)
             z = radius * math.cos(value)
 
             triangles.append((x,y,z))
+            normals.append((x, 0, z))
+            texcoords.append((i / slides, (j+1) / stacks))
         
         # Bottom
         x = radius * math.sin(angle)
@@ -517,24 +549,35 @@ def generateCylinder(radius, height, side, stack, outputFile):
         z = radius * math.cos(angle)
 
         triangles.append((x,y,z))
+        normals.append((0,-1,0))
+        texcoords.append((0.5 + 0.5 * math.cos(angle), 0.5 - 0.5 * math.sin(angle)))
  
         x = 0
         y = 0
         z = 0
 
         triangles.append((x,y,z))
+        normals.append((0,-1,0))
+        texcoords.append((0.5, 0.5))
         
         x = radius * math.sin(value)
         y = 0 
         z = radius * math.cos(value)
         
         triangles.append((x,y,z))       
+        normals.append((0,-1,0))
+        texcoords.append((0.5 + 0.5 * math.cos(value), 0.5 - 0.5 * math.sin(value)))
     
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+
+            f.write('\n')
 
 def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
     triangles = []
