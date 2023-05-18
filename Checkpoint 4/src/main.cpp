@@ -85,6 +85,7 @@ void prepareData(Group& g)
 				GL_STATIC_DRAW);
 		}
 	}
+
 	for (Group& group : g.groups) {
 		prepareData(group);
 	}
@@ -92,38 +93,28 @@ void prepareData(Group& g)
 
 
 void initLighting() {
-	glEnable(GL_LIGHTING);
+	float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
 
 	int numLights = estrutura.lights.size();
-	for (int i = 0; i < numLights; i++) {
-		glEnable(GL_LIGHT0 + i);
-	}
 
 	for (int i = 0; i < numLights; i++) {
 		if (estrutura.lights[i].type == "point") {
-			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 };
 			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
-
+			glEnable(GL_LIGHT0 + i);
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
-			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
 		}
 		if (estrutura.lights[i].type == "directional") {
-			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 };
-			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 1.0 };
-
-			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
-			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
+			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 0.0 };
+			glEnable(GL_LIGHT0 + i);
+			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightDir);
 		}
 		if (estrutura.lights[i].type == "spot") {
-			float lightColor[4] = { 1.0, 1.0, 1.0, 1.0 }; 
 			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
 			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 0.0 };
-
+			glEnable(GL_LIGHT0 + i);
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
 			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
-			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, lightColor);
-			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, lightColor);
-
 			glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, estrutura.lights[i].cutoff);
 		}
 	}
@@ -156,7 +147,7 @@ void loadTexture(string textureName, unsigned int& textureID) {
 
 
 void loadColor(const Model& model) {
-	float diffuse[4] = { model.color[0].values.x, model.color[0].values.y, model.color[0].values.z, 1.0f };
+	float diffuse[4] = { model.color[0].values.x / 255, model.color[0].values.y / 255, model.color[0].values.z / 255, 1.0f };
 	float ambient[4] = { model.color[1].values.x / 255, model.color[1].values.y / 255, model.color[1].values.z / 255, 1.0f };
 	float specular[4] = { model.color[2].values.x / 255, model.color[2].values.y / 255, model.color[2].values.z / 255, 1.0f };
 	float emission[4] = { model.color[3].values.x / 255, model.color[3].values.y / 255, model.color[3].values.z / 255, 1.0f };
@@ -169,14 +160,25 @@ void loadColor(const Model& model) {
 }
 
 
-void init() {
-	ilInit();
-
-	for (Model& model : estrutura.group.models) {
+void prepareTextures(Group& g) {
+	for (Model& model : g.models) {
 		if (!model.texture.empty())
 			loadTexture(model.texture, model.textureID);
 	}
 
+	for (Group& group : g.groups) {
+		prepareTextures(group);
+	}
+}
+
+
+void init() {
+	ilInit();
+
+	prepareTextures(estrutura.group);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_RESCALE_NORMAL);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -306,8 +308,8 @@ void changeSize(int w, int h) {
 	// Set the viewport to be the entire window
 	glViewport(0, 0, w, h);
 
-	//gluPerspective(estrutura.camera.projection.fov, estrutura.window.width / estrutura.window.height, estrutura.camera.projection.near, estrutura.camera.projection.far);
-	gluPerspective(45, ratio, 1, 1000);
+	gluPerspective(estrutura.camera.projection.fov, estrutura.window.width / estrutura.window.height, estrutura.camera.projection.near, estrutura.camera.projection.far);
+	
 	// return to the model view matrix mode
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -320,9 +322,6 @@ void drawShape(Model& model) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	if (model.colour.size() > 0)
-		glColor3f(model.colour[0], model.colour[1], model.colour[2]);
 
 	loadColor(model);
 
@@ -339,7 +338,6 @@ void drawShape(Model& model) {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-
 
 
 void translateObject(Transform& transform) {
@@ -549,7 +547,7 @@ Group readGroup(Group& group, xml_node<>* groupNode) {
 	xml_node<>* transformNode = groupNode->first_node("transform");
 	xml_node<>* modelsNode = groupNode->first_node("models");
 	xml_node<>* groupsNode = groupNode->first_node("group");
-
+	
 	if (transformNode != NULL) {
 		bool t = false, r = false, s = false;
 		
@@ -851,7 +849,7 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/test.xml");
+	file<> xmlFile("../xml/test_4_3.xml");
 
 	// Parse the XML file
 	xml_document<> doc;
@@ -907,7 +905,6 @@ void loadXML() {
 int main(int argc, char** argv) {
 
 	loadXML();
-
 	// init GLUT and the window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
