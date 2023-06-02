@@ -74,6 +74,7 @@ def generateSphere(radius, slice, stack, outputFile):
 
             u = i / slices
             v = (j + stacks / 2) / stacks
+
             texcoords.append((u, v))
             texcoords.append(((i + 1) / slices, v))
             texcoords.append((u, (j + 1 + stacks / 2) / stacks))
@@ -298,40 +299,13 @@ def generateCone(radius, height, slice, stack, outputFile):
             zz = radius * math.cos((i + 1) * angle)
             xx = radius * math.sin((i + 1) * angle)
 
-            if j == 0:
-                a = xx * ((stacks - j) / stacks)
-                b = height * j / stacks
-                c = zz * ((stacks - j) / stacks)
-
-                triangles.append((a, b, c))
-                normals.append((x, radius, z))
-                texcoords.append((i / slices, 0))
-
+            if (j < stacks):
                 a = x * ((stacks - j) / stacks)
                 b = height * j / stacks
                 c = z * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((x, radius, z))
-                texcoords.append(((i + 1) / slices, 0))
-                
-                a = 0
-                b = height * j / stacks
-                c = 0
-
-                triangles.append((a, b, c))
-                normals.append((0, -1, 0))
-                texcoords.append((0.5, 0.5))
-
-            angle2 = math.pi / slices
-
-            if (j < stacks - 1):
-                a = x * ((stacks - j) / stacks)
-                b = height * j / stacks
-                c = z * ((stacks - j) / stacks)
-
-                triangles.append((a, b, c))
-                normals.append((x, radius * math.cos(angle2), z))
+                normals.append((x, math.cos(math.atan(height/radius)), z))
                 texcoords.append((i / slices, (j + 1) / stacks))
                 
                 a = xx * ((stacks - j) / stacks)
@@ -339,7 +313,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((xx, radius * math.cos(angle2), zz))
+                normals.append((xx, math.cos(math.atan(height/radius)), zz))
                 texcoords.append(((i + 1) / slices, (j + 1) / stacks))
                 
                 a = x * ((stacks - j - 1) / stacks)
@@ -347,7 +321,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = z * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((x, radius * math.cos(angle2), z))
+                normals.append((x, math.cos(math.atan(height/radius)), z))
                 texcoords.append((i / slices, j / stacks))
                 
                 a = xx * ((stacks - j) / stacks)
@@ -355,7 +329,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = zz * ((stacks - j) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((xx, radius * math.cos(angle2), zz))
+                normals.append((xx, math.cos(math.atan(height/radius)), zz))
                 texcoords.append(((i + 1) / slices, (j + 1) / stacks))
                 
                 a = xx * ((stacks - j - 1) / stacks)
@@ -363,7 +337,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = zz * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((xx, radius * math.cos(angle2), zz))
+                normals.append((xx, math.cos(math.atan(height/radius)), zz))
                 texcoords.append(((i + 1) / slices, j / stacks))
 
                 a = x * ((stacks - j - 1) / stacks)
@@ -371,7 +345,7 @@ def generateCone(radius, height, slice, stack, outputFile):
                 c = z * ((stacks - j - 1) / stacks)
 
                 triangles.append((a, b, c))
-                normals.append((x, radius * math.cos(angle2), z))
+                normals.append((x, math.cos(math.atan(height/radius)), z))
                 texcoords.append((i / slices, j / stacks))
 
             else:
@@ -612,6 +586,9 @@ def generateCylinder(radius, height, side, stack, outputFile):
 
 def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
     triangles = []
+    normals = []
+    texcoords = []
+
     slides = int(slide)
     stacks = int(stack)
     
@@ -796,7 +773,7 @@ shapes = {
         'func': generateTorus,
         'args': ['outerRadius', 'innerRadius', 'side', 'ring', 'outputFile']
     },
-    'bezier':{
+    'patch':{
         'func': generateBezier,
         'args': ['inputFile', 'tess', 'outputFile']
     }

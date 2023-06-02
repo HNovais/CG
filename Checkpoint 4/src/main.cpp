@@ -94,6 +94,7 @@ void prepareData(Group& g)
 
 void initLighting() {
 	float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float dark[4] = { 0.2, 0.2, 0.2, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
 
 	int numLights = estrutura.lights.size();
@@ -103,11 +104,17 @@ void initLighting() {
 			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
 			glEnable(GL_LIGHT0 + i);
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
+			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, dark);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, amb);
+			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, amb);
 		}
 		if (estrutura.lights[i].type == "directional") {
 			float lightDir[4] = { estrutura.lights[i].dir.x, estrutura.lights[i].dir.y, estrutura.lights[i].dir.z, 0.0 };
 			glEnable(GL_LIGHT0 + i);
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightDir);
+			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, dark);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, amb);
+			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, amb);
 		}
 		if (estrutura.lights[i].type == "spot") {
 			float lightPos[4] = { estrutura.lights[i].pos.x, estrutura.lights[i].pos.y, estrutura.lights[i].pos.z , 1.0 };
@@ -116,6 +123,9 @@ void initLighting() {
 			glLightfv(GL_LIGHT0 + i, GL_POSITION, lightPos);
 			glLightfv(GL_LIGHT0 + i, GL_SPOT_DIRECTION, lightDir);
 			glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, estrutura.lights[i].cutoff);
+			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, dark);
+			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, amb);
+			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, amb);\
 		}
 	}
 }
@@ -138,7 +148,7 @@ void loadTexture(string textureName, unsigned int& textureID) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
 
@@ -484,7 +494,6 @@ void processKeys(unsigned char key, int xx, int yy) {
 void renderScene() {
 	// clear buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// set the camera
 	glLoadIdentity();
 
@@ -849,7 +858,7 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/test_4_3.xml");
+	file<> xmlFile("../xml/test_4_6.xml");
 
 	// Parse the XML file
 	xml_document<> doc;
