@@ -73,14 +73,14 @@ def generateSphere(radius, slice, stack, outputFile):
             normals.append((x/norm, y/norm, z/norm))
 
             u = i / slices
-            v = (j + stacks / 2) / stacks
+            v = 1 - ((j + stacks / 2) / stacks)
 
             texcoords.append((u, v))
             texcoords.append(((i + 1) / slices, v))
-            texcoords.append((u, (j + 1 + stacks / 2) / stacks))
+            texcoords.append((u, 1 - ((j + 1 + stacks / 2) / stacks)))
             texcoords.append(((i + 1) / slices, v))
-            texcoords.append(((i + 1) / slices, (j + 1 + stacks / 2) / stacks))
-            texcoords.append((u, (j + 1 + stacks / 2) / stacks))
+            texcoords.append(((i + 1) / slices, 1 - ((j + 1 + stacks / 2) / stacks)))
+            texcoords.append((u, 1 - ((j + 1 + stacks / 2) / stacks)))
 
     with open(outputFile, 'w') as f:
         for i in range(0, len(triangles), 3):
@@ -142,21 +142,21 @@ def generateBox(size, divisions, outputFile):
             for _ in range(6):
                 normals.append([0,-1,0])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([i*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -199,21 +199,21 @@ def generateBox(size, divisions, outputFile):
             for _ in range(6):
                 normals.append([0,0,1])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([i*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     for i in range(int(divisions)):
         for j in range(int(divisions)):
@@ -256,21 +256,21 @@ def generateBox(size, divisions, outputFile):
             for _ in range(6):
                 normals.append([1,0,0])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([i*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     with open(outputFile, 'w') as f:
         for i in range(0, len(triangles), 3):
@@ -306,7 +306,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((x, math.cos(math.atan(height/radius)), z))
-                texcoords.append((i / slices, (j + 1) / stacks))
+                texcoords.append((i / slices, 1 - (j / stacks)))
                 
                 a = xx * ((stacks - j) / stacks)
                 b = height * j / stacks
@@ -314,7 +314,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((xx, math.cos(math.atan(height/radius)), zz))
-                texcoords.append(((i + 1) / slices, (j + 1) / stacks))
+                texcoords.append(((i + 1) / slices, 1 - (j / stacks)))
                 
                 a = x * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
@@ -322,7 +322,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((x, math.cos(math.atan(height/radius)), z))
-                texcoords.append((i / slices, j / stacks))
+                texcoords.append((i / slices, 1 - ((j + 1) / stacks)))
                 
                 a = xx * ((stacks - j) / stacks)
                 b = height * j / stacks
@@ -330,7 +330,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((xx, math.cos(math.atan(height/radius)), zz))
-                texcoords.append(((i + 1) / slices, (j + 1) / stacks))
+                texcoords.append(((i + 1) / slices, 1 - (j / stacks)))
                 
                 a = xx * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
@@ -338,7 +338,7 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((xx, math.cos(math.atan(height/radius)), zz))
-                texcoords.append(((i + 1) / slices, j / stacks))
+                texcoords.append(((i + 1) / slices, 1 - ((j + 1) / stacks)))
 
                 a = x * ((stacks - j - 1) / stacks)
                 b = height * (j + 1) / stacks
@@ -346,8 +346,8 @@ def generateCone(radius, height, slice, stack, outputFile):
 
                 triangles.append((a, b, c))
                 normals.append((x, math.cos(math.atan(height/radius)), z))
-                texcoords.append((i / slices, j / stacks))
-
+                texcoords.append((i / slices, 1 - ((j + 1) / stacks)))
+                
             else:
                 a = x * ((stacks - j) / stacks)
                 b = height * j / stacks

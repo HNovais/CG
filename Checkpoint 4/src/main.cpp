@@ -125,7 +125,7 @@ void initLighting() {
 			glLightf(GL_LIGHT0 + i, GL_SPOT_CUTOFF, estrutura.lights[i].cutoff);
 			glLightfv(GL_LIGHT0 + i, GL_AMBIENT, dark);
 			glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, amb);
-			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, amb);\
+			glLightfv(GL_LIGHT0 + i, GL_SPECULAR, amb);
 		}
 	}
 }
