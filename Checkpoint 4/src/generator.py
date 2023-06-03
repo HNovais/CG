@@ -143,19 +143,19 @@ def generateBox(size, divisions, outputFile):
                 normals.append([0,-1,0])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     for i in range(int(divisions)):
@@ -200,19 +200,19 @@ def generateBox(size, divisions, outputFile):
                 normals.append([0,0,1])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     for i in range(int(divisions)):
@@ -257,19 +257,19 @@ def generateBox(size, divisions, outputFile):
                 normals.append([1,0,0])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
-
+            texcoords.append([i*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
+            
             texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([i*ss, i-(j*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
             texcoords.append([i*ss, 1-((j+1)*ss)])
-            texcoords.append([(i+1)*ss, i-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
             texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
     with open(outputFile, 'w') as f:
@@ -426,21 +426,21 @@ def generatePlane(size, divisions, outputFile):
             triangles.append([x2, y2, z2])
             triangles.append([x4, y4, z4])
 
-            texcoords.append([(i+1)*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([i*ss, j*ss])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([i*ss, j*ss])
-            texcoords.append([(i+1)*ss, j*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([i*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
 
-            texcoords.append([i*ss, (j+1)*ss])
-            texcoords.append([(i+1)*ss, j*ss])
-            texcoords.append([(i+1)*ss, (j+1)*ss])
+            texcoords.append([i*ss, 1-((j+1)*ss)])
+            texcoords.append([(i+1)*ss, 1-(j*ss)])
+            texcoords.append([(i+1)*ss, 1-((j+1)*ss)])
 
             for m in range(6):
                 normals.append([0,1,0])
@@ -591,62 +591,79 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
 
     slides = int(slide)
     stacks = int(stack)
-    
+
     for i in range(slides):
         alpha = i * (2 * math.pi / slides)
         cosalpha = math.cos(alpha)
         sinalpha = math.sin(alpha)
-        
+
         for j in range(stacks):
             beta = j * (2 * math.pi / stacks)
             cosbeta = math.cos(beta)
             sinbeta = math.sin(beta)
-            
+
             x = (outerRadius + innerRadius * cosbeta) * cosalpha
             y = innerRadius * sinbeta
             z = (outerRadius + innerRadius * cosbeta) * sinalpha
-            
+
             triangles.append((x, y, z))
-            
+            normals.append(((outerRadius * cosbeta) * cosalpha, innerRadius * sinbeta, (outerRadius * cosbeta) * sinalpha))
+            texcoords.append((i / slides, j / stacks))
+
             nextalpha = (alpha + 2 * math.pi / slides) % (2 * math.pi)
             nextCosalpha = math.cos(nextalpha)
             nextSinalpha = math.sin(nextalpha)
-            
+
             nextbeta = (beta + 2 * math.pi / stacks) % (2 * math.pi)
             nextCosbeta = math.cos(nextbeta)
             nextSinbeta = math.sin(nextbeta)
-            
+
             nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
             nextY = innerRadius * nextSinbeta
             nextZ = (outerRadius + innerRadius * nextCosbeta) * sinalpha
-            
+
             triangles.append((nextX, nextY, nextZ))
-            
+            normals.append(((outerRadius * nextCosbeta) * cosalpha, innerRadius * nextSinbeta, (outerRadius * nextCosbeta) * sinalpha))
+            texcoords.append(((i + 1) / slides, j / stacks))
+
             nextX = (outerRadius + innerRadius * cosbeta) * nextCosalpha
             nextY = innerRadius * sinbeta
             nextZ = (outerRadius + innerRadius * cosbeta) * nextSinalpha
 
             triangles.append((nextX, nextY, nextZ))
-            
+            normals.append(((outerRadius * cosbeta) * nextCosalpha, innerRadius * sinbeta, (outerRadius * cosbeta) * nextSinalpha))
+            texcoords.append((i / slides, (j + 1) / stacks))
+
             triangles.append((nextX, nextY, nextZ))
-            
+            normals.append(((outerRadius * cosbeta) * nextCosalpha, innerRadius * sinbeta, (outerRadius * cosbeta) * nextSinalpha))
+            texcoords.append((i / slides, (j + 1) / stacks))
+
             nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
             nextY = innerRadius * nextSinbeta
             nextZ = (outerRadius + innerRadius * nextCosbeta) * sinalpha
-            
+
             triangles.append((nextX, nextY, nextZ))
+            normals.append(((outerRadius * nextCosbeta) * cosalpha, innerRadius * nextSinbeta, (outerRadius * nextCosbeta) * sinalpha))
+            texcoords.append(((i + 1) / slides, j / stacks))
 
             nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
             nextY = innerRadius * nextSinbeta
             nextZ = (outerRadius + innerRadius * nextCosbeta) * nextSinalpha
-            
+
             triangles.append((nextX, nextY, nextZ))
-    
+            normals.append(((outerRadius * nextCosbeta) * nextCosalpha, innerRadius * nextSinbeta, (outerRadius * nextCosbeta) * nextSinalpha))
+            texcoords.append(((i + 1) / slides, (j + 1) / stacks))
+
     with open(outputFile, 'w') as f:
-        for i, l in enumerate(triangles):
-            f.write(' '.join(str(x) for x in l) + '\n')
-            if (i+1) % 3 == 0:
-                f.write('\n')
+        for i in range(0, len(triangles), 3):
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in triangles[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in normals[j]) + '\n')
+            for j in range(i, i+3):
+                f.write(' '.join(str(x) for x in texcoords[j]) + '\n')
+
+            f.write('\n')
 
 def generateBezier(inputFile, tess, outputFile):
     with open(inputFile, 'r') as f:
