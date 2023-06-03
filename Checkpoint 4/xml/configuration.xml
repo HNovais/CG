@@ -7,14 +7,27 @@
         <projection fov="60" near="1" far="1500" /> <!-- optional, use these values as default-->
     </camera>
 
+	<lights>
+		<light type="point" posx="0" posy="0" posz="0" />
+	</lights>
+	
     <group> <!-- Sun -->
 		<transform>
 			<rotate time="200" x="0.1" y ="1" z = "0" />
 		</transform>
-        <models>
-            <colour r="1" g="0.6" b="0" />
-            <model file="sphere.3d" />
-        </models>
+		<models>
+			<colour r="1" g="0.6" b="0" />
+			<model file="sphere.3d">
+				<texture file = "sun.jpg" />
+				<color>
+					<diffuse R="0" G="0" B="0" />
+					<ambient R="0" G="0" B="0" />
+					<specular R="0" G="0" B="0" />
+					<emissive R="255" G="255" B="255" />
+					<shininess value="0" />
+				</color>
+			</model>
+		</models>
         <group> <!-- Mercury -->
             <transform>
 				<translate time="88" align="True">
@@ -38,7 +51,9 @@
             </transform>
             <models>
                 <colour r="0.8" g="0.8" b="0.8" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "mercury.jpg" />
+				</model>
             </models>
         </group>
         <group> <!-- Venus -->
@@ -64,7 +79,9 @@
             </transform>
             <models>
                 <colour r="0.7" g="0.6" b="0.1" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "venus.jpg" />
+				</model>
             </models>
         </group> 
         <group> <!-- Earth -->
@@ -90,7 +107,9 @@
             </transform>
             <models>
                 <colour r="0" g="0" b="1" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "earth.jpg" />
+				</model>
             </models>
             <group> <!-- Moon -->
                 <transform>
@@ -100,7 +119,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.7" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -127,7 +148,9 @@
             </transform>
             <models>
                 <colour r="0.8" g="0.6" b="0.1" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "mars.jpg" />
+				</model>
             </models>
             <group> <!-- Phobos -->
                 <transform>
@@ -137,7 +160,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Deimos -->
@@ -148,7 +173,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.4" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -175,7 +202,9 @@
             </transform>
             <models>
                 <colour r="0.7" g="0.6" b="0.5" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "jupiter.jpg" />
+				</model>
             </models>
             <group> <!-- Io -->
                 <transform>
@@ -185,7 +214,9 @@
                 </transform>
                 <models>
                     <colour r="0.8" g="0.8" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Europa -->
@@ -196,7 +227,9 @@
                 </transform>
                 <models>
                     <colour r="0.2" g="0.2" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Ganymede -->
@@ -207,7 +240,9 @@
                 </transform>
                 <models>
                     <colour r="0.3" g="0.3" b="0.3" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Callisto -->
@@ -218,7 +253,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.5" b="0.5" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -245,7 +282,9 @@
             </transform>
             <models>
                 <colour r="0.8" g="0.7" b="0.6" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "saturn.jpg" />
+				</model>
             </models>
             <group> <!-- Saturn Rings-->
                 <transform>
@@ -254,7 +293,9 @@
                 </transform>
                  <models>
                     <colour r="0.9" g="0.9" b="0.9" />
-                    <model file="saturnRings.3d" />
+					 <model file="saturnRings.3d" >
+						 <texture file = "saturn_ring.jpg" />
+					 </model>
                 </models>
             </group>
             <group> <!-- Titan -->
@@ -265,7 +306,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Mimas -->
@@ -276,7 +319,9 @@
                 </transform>
                 <models>
                     <colour r="0.2" g="0.2" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Tethys -->
@@ -287,7 +332,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.7" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Dione -->
@@ -298,7 +345,9 @@
                 </transform>
                 <models>
                     <colour r="0.5" g="0.5" b="0.5" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -325,7 +374,9 @@
             </transform>
             <models>
                 <colour r="0.7" g="0.8" b="0.9" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "uranus.jpg" />
+				</model>
             </models>
             <group> <!-- Uranus Rings-->
                 <transform>
@@ -333,7 +384,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.9" b="1" />
-                    <model file="uranusRings.3d" />
+					<model file="uranusRings.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Ariel -->
@@ -344,7 +397,9 @@
                 </transform>
                 <models>
                     <colour r="0.2" g="0.2" b="0.2" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
             <group> <!-- Umbriel -->
@@ -355,7 +410,9 @@
                 </transform>
                 <models>
                     <colour r="0.7" g="0.7" b="0.7" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -382,7 +439,9 @@
             </transform>
             <models>
                 <colour r="0.4" g="0.4" b="1" />
-                <model file="sphere.3d" />
+				<model file="sphere.3d" >
+					<texture file = "neptune.jpg" />
+				</model>
             </models>
             <group> <!-- Triton -->
                 <transform>
@@ -392,7 +451,9 @@
                 </transform>
                 <models>
                     <colour r="0.5" g="0.5" b="0.5" />
-                    <model file="sphere.3d" />
+					<model file="sphere.3d" >
+						<texture file = "moon.jpg" />
+					</model>
                 </models>
             </group>
         </group>
@@ -418,7 +479,9 @@
             </transform>
             <models>
                 <colour r="0.7" g="0.7" b="0.7"/>
-                <model file="asteroid.3d" />
+                <model file="asteroid.3d" >
+					<texture file = "moon.jpg" />
+				</model>
             </models>
         </group>
     </group>
