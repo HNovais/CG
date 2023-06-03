@@ -858,7 +858,7 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/test_4_6.xml");
+	file<> xmlFile("../xml/test.xml");
 
 	// Parse the XML file
 	xml_document<> doc;

@@ -13,7 +13,7 @@
 
 	<group> 
   		<models> 
-			<model file="s.3d" > 
+			<model file="sphere.3d" > 
                 <texture file="sun.jpg"/>
 				<color>
                     <diffuse R="200" G="200" B="000" />
