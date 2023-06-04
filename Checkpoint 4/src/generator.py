@@ -521,7 +521,7 @@ def generateCylinder(radius, height, side, stack, outputFile):
 
             triangles.append((x,y,z))
             normals.append((x, 0, z))
-            texcoords.append((i / slides, j / stacks))
+            texcoords.append((i / slides, (j + 1) / stacks))
 
 
             x = radius * math.sin(angle)
@@ -546,7 +546,7 @@ def generateCylinder(radius, height, side, stack, outputFile):
 
             triangles.append((x,y,z))
             normals.append((x, 0, z))
-            texcoords.append((i / slides, (j+1) / stacks))
+            texcoords.append(((i+1) / slides, (j+1) / stacks))
         
         # Bottom
         x = radius * math.sin(angle)
