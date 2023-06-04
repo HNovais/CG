@@ -624,7 +624,7 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
 
             triangles.append((nextX, nextY, nextZ))
             normals.append(((outerRadius * nextCosbeta) * cosalpha, innerRadius * nextSinbeta, (outerRadius * nextCosbeta) * sinalpha))
-            texcoords.append(((i + 1) / slides, j / stacks))
+            texcoords.append((i / slides, (j + 1) / stacks))
 
             nextX = (outerRadius + innerRadius * cosbeta) * nextCosalpha
             nextY = innerRadius * sinbeta
@@ -632,11 +632,11 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
 
             triangles.append((nextX, nextY, nextZ))
             normals.append(((outerRadius * cosbeta) * nextCosalpha, innerRadius * sinbeta, (outerRadius * cosbeta) * nextSinalpha))
-            texcoords.append((i / slides, (j + 1) / stacks))
+            texcoords.append(((i + 1) / slides, j / stacks))
 
             triangles.append((nextX, nextY, nextZ))
             normals.append(((outerRadius * cosbeta) * nextCosalpha, innerRadius * sinbeta, (outerRadius * cosbeta) * nextSinalpha))
-            texcoords.append((i / slides, (j + 1) / stacks))
+            texcoords.append(((i + 1) / slides, j / stacks))
 
             nextX = (outerRadius + innerRadius * nextCosbeta) * cosalpha
             nextY = innerRadius * nextSinbeta
@@ -644,7 +644,7 @@ def generateTorus(outerRadius, innerRadius, slide, stack, outputFile):
 
             triangles.append((nextX, nextY, nextZ))
             normals.append(((outerRadius * nextCosbeta) * cosalpha, innerRadius * nextSinbeta, (outerRadius * nextCosbeta) * sinalpha))
-            texcoords.append(((i + 1) / slides, j / stacks))
+            texcoords.append((i / slides, (j + 1) / stacks))
 
             nextX = (outerRadius + innerRadius * nextCosbeta) * nextCosalpha
             nextY = innerRadius * nextSinbeta
