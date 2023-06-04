@@ -94,7 +94,7 @@ void prepareData(Group& g)
 
 void initLighting() {
 	float amb[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	float dark[4] = { 0.2, 0.2, 0.2, 1.0 };
+	float dark[4] = { 0.0, 0.0, 0.0, 1.0 };
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, amb);
 
 	int numLights = estrutura.lights.size();
@@ -858,7 +858,7 @@ vector<Lights> readLights(xml_node<>* lightsNode) {
 void loadXML() {
 
 	// Load the XML file
-	file<> xmlFile("../xml/configuration.xml");
+	file<> xmlFile("../xml/test_4_3.xml");
 
 	// Parse the XML file
 	xml_document<> doc;

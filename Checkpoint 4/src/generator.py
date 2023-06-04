@@ -692,6 +692,8 @@ def generateBezier(inputFile, tess, outputFile):
                     [1, 0, 0, 0]])
 
         pos = np.zeros(3)
+        AAAA = np.zeros(3)
+        BBBB = np.zeros(3)
 
         for i in range(3):
             P = np.array([[arr[0][i], arr[1][i], arr[2][i], arr[3][i]],
@@ -704,10 +706,17 @@ def generateBezier(inputFile, tess, outputFile):
                         [v*v], 
                         [v], 
                         [1]])
+            
+            UD = np.array([3*u*u, 2*u, 1, 0])
+            VD = np.array([[3*v*v],[2*v],[1],[0]])
+
+            AAAA[i] = np.dot(np.dot(np.dot(np.dot(UD,m),P),m), V)
+            BBBB[i] = np.dot(np.dot(np.dot(np.dot(U,m),P),m), VD)
 
             pos[i] = np.dot(np.dot(np.dot(np.dot(U,m),P),m), V)
 
-        return pos
+        res = np.cross(BBBB, AAAA)
+        return (pos,res)
     
     delta = 1.0/tessellation
     for patch in patches:
@@ -723,35 +732,25 @@ def generateBezier(inputFile, tess, outputFile):
                 C = calculatePoint(u+delta, v, arr)
                 D = calculatePoint(u+delta, v+delta, arr)
 
-                normal = np.cross(B - A, C - A) # normal entre os pontos A B C
-                magnitude = np.linalg.norm(normal) # Tamanho do vetor normal
-                if magnitude < 1e-6: # ver se é perto de zero pra não dar problemas com a divisão
-                    continue
-                
-                normal /= magnitude
+                triangles.append(B[0])
+                triangles.append(C[0])
+                triangles.append(A[0])
+                triangles.append(B[0])
+                triangles.append(D[0])
+                triangles.append(C[0])
 
-                triangles.append(B)
-                normals.append(normal)
+                normals.append(B[1])
+                normals.append(C[1])
+                normals.append(A[1])
+                normals.append(B[1])
+                normals.append(D[1])
+                normals.append(C[1])
+
                 texcoords.append((u, v + delta))
-
-                triangles.append(C)
-                normals.append(normal)
                 texcoords.append((u + delta, v))
-
-                triangles.append(A)
-                normals.append(normal)
                 texcoords.append((u, v))
-
-                triangles.append(B)
-                normals.append(normal)
                 texcoords.append((u, v + delta))
-
-                triangles.append(D)
-                normals.append(normal)
                 texcoords.append((u + delta, v + delta))
-
-                triangles.append(C)
-                normals.append(normal)
                 texcoords.append((u + delta, v))
                 
     with open(outputFile, 'w') as f:
